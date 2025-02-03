@@ -8,3 +8,18 @@ services:
     volumes:
       - ./public:/var/www/html
       - ./backend:/var/www/html/backend
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
