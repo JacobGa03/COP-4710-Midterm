@@ -9,3 +9,5 @@ async function testPHP() {
       console.error("Error fetching data:", error)
     })
 }
+
+async function login() {}
