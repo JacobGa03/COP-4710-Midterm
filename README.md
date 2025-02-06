@@ -28,6 +28,6 @@ After logging in, type `use mydatabase` to start using the database for this pro
 
 ## Container IDs
 
-| Main WebPage | MySQL        |
-| ------------ | ------------ |
-| ff82a25a9322 | b202bf98db80 |
+| Main WebPage       | MySQL                                                  |
+| ------------------ | ------------------------------------------------------ |
+| cop4710midterm-web | docker exec -it cop4710midterm-db-1 mysql -u myuser -p |

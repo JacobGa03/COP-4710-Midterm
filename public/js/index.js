@@ -14,5 +14,3 @@ async function testPHP() {
       .then((data) => (document.getElementById("testingAPI").innerText = data))
   )
 }
-
-async function login() {}
