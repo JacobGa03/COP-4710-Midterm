@@ -13,14 +13,18 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="/css/landing.css"
+    />
   </head>
   <body>
     <!-- Top nav bar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
       <div class="container-fluid">
         <a
           class="navbar-brand"
-          href="#"
+          href="landing.html"
           >UniEvents</a
         >
         <button
@@ -39,39 +43,37 @@
           class="collapse navbar-collapse"
           id="navbarSupportedContent"
         >
-          <!-- TODO: link to other pages -->
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item active">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
               <a
-                class="nav-link"
+                class="nav-link active"
+                aria-current="page"
                 href="#"
-                >Home <span class="sr-only">(current)</span></a
+                >Home</a
               >
             </li>
             <li class="nav-item">
               <a
                 class="nav-link"
-                href="#services"
-                >What We Do</a
+                href="#"
+                >Features</a
               >
             </li>
             <li class="nav-item">
               <a
                 class="nav-link"
                 href="login.html"
-                >Login/Register</a
+                >Login</a
               >
             </li>
           </ul>
         </div>
       </div>
     </nav>
-    <div style="margin-top: 70px"></div>
 
     <!-- Hero Section (about the application)-->
-    <!-- TODO: Having a neat picture of UCF would be cool-->
-    <header class="jumbotron jumbotron-fluid">
-      <div class="container-fluid text-center">
+    <header class="hero-section text-center">
+      <div class="container-fluid">
         <h1 class="display-3">Welcome to UniEvents!</h1>
         <p class="lead pb-4">
           Planning Events for Your University has Never Been Easier!
@@ -81,29 +83,32 @@
             href="#"
             class="btn btn-primary btn-lg"
             role="button"
-            onclick="testPHP();"
             >Learn More</a
           >
         </p>
       </div>
     </header>
 
+    <!-- About the app section TODO: Add screenshots of using the application -->
+
     <!-- "Contact" section-->
     <section
-      class="container-fluid text-center py-4 mt-4"
+      class="contact-section text-center py-4 mt-4"
       id="contact"
     >
-      <h2 class="display-4 pb-4 my-4">
-        This was Proudly Made by CS Students at UCF!
-      </h2>
-      <p class="lead pb-3">Feel Free to Give us a Follow on GitHub</p>
-      <a
-        href="https://github.com/JacobGa03/COP-4710-Midterm"
-        target="_blank"
-        class="btn btn-primary btn-lg mb-4"
-        role="button"
-        >GitHub</a
-      >
+      <div class="container">
+        <h2 class="display-4 pb-4 my-4">
+          This was Proudly Made by CS Students at UCF!
+        </h2>
+        <p class="lead pb-3">Feel Free to Give us a Follow on GitHub</p>
+        <a
+          href="https://github.com/JacobGa03/COP-4710-Midterm"
+          target="_blank"
+          class="btn btn-primary btn-lg mb-4"
+          role="button"
+          >GitHub</a
+        >
+      </div>
     </section>
 
     <script

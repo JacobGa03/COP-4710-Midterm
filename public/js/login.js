@@ -1,9 +1,17 @@
-// import { sha256 } from "sha256.js"
+import { sha256 } from "./sha256.js"
 
 async function login() {
-  let email = $("body").find("#enterEmail").val()
-  //   let password = sha256($("body").find("#enterPassword")).val()
-  let password = $("body").find("#enterPassword").val()
+  // Grab the credentials
+  let email = $("body").find("#enterEmail")
+  let password = $("body").find("#enterPassword")
 
-  console.log(`email: ${email} & password: ${password} `)
+  if (!validEntry(email.val(), password.val())) return
+
+  // TODO: Log user in
 }
+
+function validEntry(email, password) {
+  return email != "" && password != ""
+}
+
+window.login = login

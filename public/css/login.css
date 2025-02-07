@@ -1,0 +1,16 @@
+html,
+body {
+  font-family: "Roboto", sans-serif;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container {
+  background-color: rgb(194, 194, 194);
+  width: 100%;
+  padding: 50px;
+  margin: auto;
+  border-radius: 8px;
+}

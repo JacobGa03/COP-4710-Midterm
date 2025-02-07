@@ -13,108 +13,114 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link
+      href="css/register.css"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <h1>Welcome to register page</h1>
+    <div class="container">
+      <h1>Thank You for Joining UniEvents!</h1>
+      <!-- Basic registration information -->
+      <form class="was-validated">
+        <div class="mb-3">
+          <div class="mt-3 mb-3">
+            <label
+              for="enterEmail"
+              class="form-label"
+              >Email Address</label
+            >
+            <input
+              type="email"
+              class="form-control"
+              id="enterEmail"
+              placeholder="your@email.com"
+              required
+            />
+            <div class="invalid-feedback">Please enter a valid email</div>
+          </div>
+          <div class="mt-3 mb-3">
+            <label
+              for="enterPassword"
+              class="form-label"
+              >Password</label
+            >
+            <input
+              type="password"
+              class="form-control"
+              id="enterPassword"
+              placeholder="yourP@ssw0rd"
+              required
+            />
+            <div class="invalid-feedback">Please enter your password</div>
+          </div>
+          <div class="mt-3 mb-3">
+            <label
+              for="reEnterPassword"
+              class="form-label"
+              >Confirm Password</label
+            >
+            <input
+              type="confirmPassword"
+              class="form-control"
+              id="enterPassword"
+              placeholder="yourP@ssw0rd"
+              required
+            />
+            <div class="invalid-feedback">Please enter your password</div>
+          </div>
 
-    <!-- Basic registration information -->
-    <div class="mb-3">
-      <label
-        for="enterEmail"
-        class="form-label"
-        >Email Address</label
-      >
-      <input
-        type="email"
-        class="form-control"
-        id="enterEmail"
-        placeholder="your@email.com"
-      />
-      <label
-        for="enterPassword"
-        class="form-label"
-        >Password</label
-      >
-      <input
-        type="password"
-        class="form-control"
-        id="enterPassword"
-        placeholder="yourP@ssw0rd"
-      />
+          <label
+            for="enterSchool"
+            class="form-label"
+            >Your School</label
+          >
+          <input
+            type=""
+            class="form-control"
+            id="enterSchoo"
+            placeholder="State University"
+          />
 
-      <label
-        for="reenterPassword"
-        class="form-label"
-        >Confirm Password</label
-      >
-      <input
-        type="password"
-        class="form-control"
-        id="reenterPassword"
-        placeholder="yourP@ssw0rd"
-      />
+          <!-- They can register as either school admin or student -->
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="flexRadioDefault"
+              id="flexRadioDefault1"
+            />
+            <label
+              class="form-check-label"
+              for="flexRadioDefault1"
+            >
+              Student
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="flexRadioDefault"
+              id="flexRadioDefault2"
+              checked
+            />
+            <label
+              class="form-check-label"
+              for="flexRadioDefault2"
+            >
+              School Administrator
+            </label>
+          </div>
 
-      <label
-        for="enterPassword"
-        class="form-label"
-        >Password</label
-      >
-      <input
-        type="password"
-        class="form-control"
-        id="enterPassword"
-        placeholder="yourP@ssw0rd"
-      />
-
-      <label
-        for="enterSchool"
-        class="form-label"
-        >Your School</label
-      >
-      <input
-        type=""
-        class="form-control"
-        id="enterSchoo"
-        placeholder="State University"
-      />
-
-      <!-- They can register as either school admin or student -->
-      <div class="form-check">
-        <input
-          class="form-check-input"
-          type="radio"
-          name="flexRadioDefault"
-          id="flexRadioDefault1"
-        />
-        <label
-          class="form-check-label"
-          for="flexRadioDefault1"
-        >
-          Student
-        </label>
-      </div>
-      <div class="form-check">
-        <input
-          class="form-check-input"
-          type="radio"
-          name="flexRadioDefault"
-          id="flexRadioDefault2"
-          checked
-        />
-        <label
-          class="form-check-label"
-          for="flexRadioDefault2"
-        >
-          School Administrator
-        </label>
-      </div>
-
-      <button
-        type="button"
-        class="btn btn-primary"
-      >
-        Register
-      </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+          >
+            Register
+          </button>
+        </div>
+      </form>
     </div>
 
     <script
