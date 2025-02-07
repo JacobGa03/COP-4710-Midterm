@@ -2,7 +2,7 @@
 // https://geraintluff.github.io/sha256/
 // This code generates a SHA 256 hash value which will be used
 // to increase the security of of storing user passwords.
-var sha256 = function sha256(ascii) {
+export function sha256(ascii) {
   function rightRotate(value, amount) {
     return (value >>> amount) | (value << (32 - amount))
   }
