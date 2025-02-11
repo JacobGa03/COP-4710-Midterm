@@ -51,7 +51,8 @@ $(document).ready(function () {
 
     // Ensure that both email and password were entered correctly
     if (passwordError && emailError) {
-      return true
+      window.history.pushState("", "", "dashboard.html")
+      // return true
     } else {
       return false
     }

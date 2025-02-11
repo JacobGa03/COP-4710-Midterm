@@ -66,11 +66,18 @@ $(document).ready(function () {
     return true
   }
 
-  // Validate school
+  // Enable auto complete for the school names
+  $.getJSON("assets/us_institutions.json", function (data) {
+    const schoolNames = data.map((school) => school.institution)
+
+    // Initialize autocomplete
+    $("#enterSchool").autocomplete({
+      source: schoolNames,
+    })
+  })
 
   // Handle submit
   $("#submitRegister").click(function () {
-    console.log("trying to submit")
     validateConfirmationPass()
     validatePassword()
     email.dispatchEvent(new Event("blur"))
