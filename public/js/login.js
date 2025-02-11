@@ -7,11 +7,17 @@ $(document).ready(function () {
   email.addEventListener("blur", () => {
     let regex = /^([_\-\.0-9a-zA-Z]+)@([_\-\.0-9a-zA-Z]+)\.([a-zA-Z]){2,7}$/
     let s = email.value
+
+    // Valid email
     if (regex.test(s)) {
-      email.classList.remove("is-invalid")
+      $("#enterEmail").removeClass("is-invalid").addClass("is-valid")
+      $("#emailError").hide()
       emailError = true
-    } else {
-      email.classList.add("is-invalid")
+    }
+    // Invalid email
+    else {
+      $("#enterEmail").removeClass("is-valid").addClass("is-invalid")
+      $("#emailError").show()
       emailError = false
     }
   })
@@ -25,13 +31,15 @@ $(document).ready(function () {
   // Validate Password
   function validatePassword() {
     let passwordValue = $("#enterPassword").val()
+    // Invalid password
     if (passwordValue == "") {
+      $("#enterPassword").removeClass("is-valid").addClass("is-invalid")
       $("#passwordError").show()
-      $("#passwordError").html("Enter Your Password")
-      $("#passwordError").css("color", "red")
       passwordError = false
       return false
     }
+    // Valid password
+    $("#enterPassword").removeClass("is-invalid").addClass("is-valid")
     $("#passwordError").hide()
     passwordError = true
     return true
