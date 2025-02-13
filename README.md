@@ -26,6 +26,16 @@ Now you have access to the MySQL database!
 
 After logging in, type `use mydatabase` to start using the database for this project. Now you are using the database. Next, type `show tables` to display the current tables in the database.
 
+## Connecting MySQL to DBeaver
+
+Create new DB connection, select MySQL. Next, find the IP address of the docker container running the MySQL server.
+
+To do this, run `docker ps` and locate the Docker ID of the container running MySQL.
+
+Next run `docker inspect <docker id>` and then look for the field labeled `IP Address` and use that as the URL for the connection.
+
+Lastly, copy the Database name, username, and password from the `docker-compose.yml` file.
+
 ## Container IDs
 
 | Main WebPage       | MySQL                                                  |
