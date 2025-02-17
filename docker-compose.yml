@@ -10,17 +10,18 @@ services:
       - ./backend:/var/www/html/backend
     depends_on:
       - db
+    env_file:
+      - .env
 
   db:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: mydatabase
-      MYSQL_USER: myuser
-      MYSQL_PASSWORD: mypassword
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
-      - /backup:/docker-entrypoint-initdb.d/:ro
 
 volumes:
   db_data:
