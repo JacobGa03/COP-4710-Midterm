@@ -21,10 +21,11 @@ initialize_db() {
 backup_db() {
   echo "Backing up database..."
   mysqldump -h db -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} > /var/lib/mysql/DB_Data.sql
+  docker exec cop4710midterm-db-1 /var/lib/mysql/DB_Data.sql -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} >  ./db_data/DB_Data.sql
 }
 
 # Trap the SIGTERM signal to backup the database when the container stops
-trap 'echo "Received SIGTERM, backing up database..."; backup_db' SIGTERM
+trap backup_db SIGTERM
 
 # Wait for MySQL server to be ready
 wait_for_mysql
