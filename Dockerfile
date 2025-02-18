@@ -1,7 +1,8 @@
 # Use the official PHP image as the base image
 FROM php:7.4-apache
 
-RUN apt-get update && apt-get install -y default-mysql-client
+RUN apt-get update && apt-get install -y default-mysql-client \
+    && docker-php-ext-install mysqli
 # Copy the HTML and PHP files to the appropriate directory
 COPY public/ /var/www/html/
 COPY backend/ /var/www/html/backend/
