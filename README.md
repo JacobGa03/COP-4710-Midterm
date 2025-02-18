@@ -36,6 +36,14 @@ Next run `docker inspect <docker id>` and then look for the field labeled `IP Ad
 
 Lastly, copy the Database name, username, and password from the `docker-compose.yml` file.
 
+## SQL Dump
+
+To recreate the database reliably during development, we use a mysql dump to make the database from scratch.
+
+Run this command from outside of the container to dump the data into the backup `.sql` file
+
+`docker exec 337dab5b3bf8 mysqldump --user=myuser --password=mypassword  mydatabase --no-tablespaces > ./db_data/DB_Data.sql`
+
 ## Container IDs
 
 | Main WebPage       | MySQL                                                  |
