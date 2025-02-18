@@ -69,3 +69,8 @@ function returnError(int $code, string $message) {
   http_response_code($code); 
   returnJson(['error' => $message]);
 }
+
+//Get JSON data from the request body
+function getRequestInfo(){
+		return json_decode(file_get_contents('php://input'), true);
+}
