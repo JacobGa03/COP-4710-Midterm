@@ -40,12 +40,14 @@ Lastly, copy the Database name, username, and password from the `docker-compose.
 
 To recreate the database reliably during development, we use a mysql dump to make the database from scratch.
 
-Run this command from outside of the container to dump the data into the backup `.sql` file
+Run this command from **outside** of the container to dump the data into the backup `.sql` file. This should save whatever DB you have. Although doing this shouldn't be too important since the actual data doesn't matter.
 
-`docker exec 337dab5b3bf8 mysqldump --user=myuser --password=mypassword  mydatabase --no-tablespaces > ./db_data/DB_Data.sql`
+`docker exec cop4710termproject-db-1 mysqldump --user=${MYSQL_USER} --password=${MYSQL_PASSWORD} mydatabase --no-tablespaces > /db_data/DB_Data.sql`
 
-## Container IDs
+## Container Names
 
-| Main WebPage       | MySQL                                                  |
-| ------------------ | ------------------------------------------------------ |
-| cop4710midterm-web | docker exec -it cop4710midterm-db-1 mysql -u myuser -p |
+Useful when needing to run `docker exec`
+
+| Main WebPage         | MySQL               |
+| -------------------- | ------------------- |
+| cop4710midterm-web-1 | cop4710midterm-db-1 |

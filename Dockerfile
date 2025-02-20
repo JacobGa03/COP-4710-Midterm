@@ -11,8 +11,8 @@ COPY db_data/ /var/lib/mysql/
 
 # Copy the save saveDB.sh into the container
 # Probably could have been stored elsewhere...
-COPY saveDB.sh /usr/local/bin/saveDB.sh 
-RUN chmod +x /usr/local/bin/saveDB.sh
+#COPY saveDB.sh /usr/local/bin/saveDB.sh 
+#RUN chmod +x /usr/local/bin/saveDB.sh
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
@@ -24,4 +24,4 @@ WORKDIR /var/www/html
 EXPOSE 80
 
 # Run the script to set up and save the DB 
-ENTRYPOINT [ "/usr/local/bin/saveDB.sh" ]
+#ENTRYPOINT [ "/usr/local/bin/saveDB.sh" ]
