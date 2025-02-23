@@ -1,4 +1,4 @@
-const BASE_URL = "http://http://localhost:8000"
+const BASE_URL = "http://localhost:8000"
 const BACKEND = "/backend"
 // Just a test function to hit a fake PHP endpoint
 async function testPHP() {

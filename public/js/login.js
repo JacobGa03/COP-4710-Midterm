@@ -45,17 +45,20 @@ $(document).ready(function () {
     return true
   }
   // Submit button
-  $("#submitLogin").click(function () {
+  $("#submitLogin").click(function (e) {
     validatePassword()
     email.dispatchEvent(new Event("blur"))
 
     // Ensure that both email and password were entered correctly
     if (passwordError && emailError) {
+      e.preventDefault()
       // Grab the email and hash the password
       let emailVal = $("#enterEmail").val()
       let password = new jsSHA("SHA-256", "TEXT", { encoding: "UTF8" })
       password.update($("#enterPassword").val())
       let hashedPassword = password.getHash("HEX")
+
+      console.log(`${emailVal} and ${hashedPassword}`)
 
       // Call the login function and handle the response
       login(emailVal, hashedPassword)
@@ -65,6 +68,7 @@ $(document).ready(function () {
             $("#enterEmail").removeClass("is-valid").addClass("is-invalid")
             $("#enterPassword").removeClass("is-valid").addClass("is-invalid")
             $("#passwordError").show()
+            return false
           } else {
             // Save the user information into a cookie
             saveUserCookie(result)
@@ -89,6 +93,6 @@ async function login(email, password) {
   return await callAPI(
     "/login.php",
     { email: email, password: password },
-    "GET"
+    "POST"
   )
 }
