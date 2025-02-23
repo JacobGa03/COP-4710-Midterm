@@ -1,3 +1,5 @@
+const BASE_URL = "http://http://localhost:8000"
+const BACKEND = "/backend"
 // Just a test function to hit a fake PHP endpoint
 async function testPHP() {
   fetch("backend/test.php").then((response) =>
@@ -8,13 +10,15 @@ async function testPHP() {
 // requestData is some JSON object containing the info the specific endpoint needs.
 // method specifics which verb you'd like to run, ie. "POST", "GET", "UPDATE", etc.
 async function callAPI(endpoint, requestData, method) {
-  let url = "http://localhost:8000/backend" + endpoint
+  let url = BASE_URL + BACKEND + endpoint
 
+  // Format the JSON request
   const response = await formatResponse(url, method, requestData)
   // Call the api
   const result = await response.json()
 
   // Determine if response was successful
+  // Decode more of the responses
   switch (response.status) {
     case 200:
       console.log("Successful request...")
@@ -51,7 +55,7 @@ async function formatResponse(url, method, requestData) {
     })
   }
 }
-
+// Save user info into a cookie. Store user id which will make API calls easy
 function saveUserCookie(user) {
   // Save time stamp
   let timestamp = new Date()
@@ -69,4 +73,25 @@ function saveUserCookie(user) {
     timestamp.toUTCString() +
     ";" +
     "path=/"
+}
+// Return user information from the browser cookie
+function getUser() {
+  let user = null
+
+  for (let c of document.cookie.split(";")) {
+    c = c.trimStart()
+
+    if (c.startsWith("user=")) {
+      let value = c.substring(5)
+      // Decode the user object
+      value = decodeURIComponent(value)
+      user = JSON.parse(value)
+    }
+  }
+  return user
+}
+// Delete user's cookie and send them to the home page
+async function logout() {
+  document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
+  window.location.href = `${BASE_URL}/landing.html`
 }

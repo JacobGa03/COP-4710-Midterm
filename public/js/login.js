@@ -52,13 +52,13 @@ $(document).ready(function () {
     // Ensure that both email and password were entered correctly
     if (passwordError && emailError) {
       // Grab the email and hash the password
-      let email = $("#enterEmail").val()
+      let emailVal = $("#enterEmail").val()
       let password = new jsSHA("SHA-256", "TEXT", { encoding: "UTF8" })
       password.update($("#enterPassword").val())
       let hashedPassword = password.getHash("HEX")
 
       // Call the login function and handle the response
-      login(email, hashedPassword)
+      login(emailVal, hashedPassword)
         .then(([code, result]) => {
           if (code != 200) {
             // Handle error
