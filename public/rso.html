@@ -20,6 +20,10 @@
       rel="stylesheet"
       href="css/global.css"
     />
+    <link
+      rel="stylesheet"
+      href="css/dashboard.css"
+    />
     <script
       src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
       integrity="sha384-oBqDVmMz4fnFO9gybBogGzOg6tv6WJo4l8b4pHPF0j5pucXjFUn6K7xzZ3p3pFhn"
@@ -27,14 +31,29 @@
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/rso.js"></script>
     <title>RSO Dashboard</title>
   </head>
   <body>
+    <!-- Search bar -->
     <div id="navbar-placeholder"></div>
 
     <!-- Search box -->
     <div id="search-placeholder"></div>
 
+    <!-- Container to hold the different joinable RSOs-->
+    <div class="container-fluid">
+      <div class="col-12 d-flex flex-column h-25">
+        <div
+          class="flex-grow-1 overflow-auto"
+          style="height: 80vh; overflow-y: auto"
+          id="rsoContainer"
+        ></div>
+      </div>
+    </div>
+
+    <!-- Pagination at the bottom -->
+    <div id="pagination-placeholder"></div>
     <script>
       $(document).ready(function () {
         // Load the navbar
@@ -46,6 +65,10 @@
 
         // Load the search bar
         $("#search-placeholder").load("components\\search.html", function () {})
+        $("#pagination-placeholder").load(
+          "components\\bottom_pagination.html",
+          function () {}
+        )
       })
     </script>
   </body>
