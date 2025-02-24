@@ -93,5 +93,5 @@ function getUser() {
 // Delete user's cookie and send them to the home page
 async function logout() {
   document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
-  window.location.href = `${BASE_URL}/landing.html`
+  window.location.replace("landing.html")
 }
