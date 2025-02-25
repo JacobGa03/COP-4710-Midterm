@@ -24,13 +24,9 @@
       rel="stylesheet"
       href="css/dashboard.css"
     />
-    <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-      integrity="sha384-oBqDVmMz4fnFO9gybBogGzOg6tv6WJo4l8b4pHPF0j5pucXjFUn6K7xzZ3p3pFhn"
-      crossorigin="anonymous"
-    ></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/3.2.0/sha256.min.js"></script>
     <script src="js/dashboard.js"></script>
     <title>UniEvents Dashboard</title>
   </head>
@@ -64,7 +60,16 @@
         })
 
         // Load the search bar
-        $("#search-placeholder").load("components\\search.html", function () {})
+        $("#search-placeholder")
+          .last()
+          .load("components\\search.html", function () {
+            $("#submitSearch").click(function (e) {
+              e.preventDefault()
+              const query = $("#searchBox").val()
+              console.log("Search query:", query)
+            })
+          })
+
         $("#pagination-placeholder").load(
           "components\\bottom_pagination.html",
           function () {}

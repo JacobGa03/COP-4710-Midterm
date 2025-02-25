@@ -1,7 +1,8 @@
 $(document).ready(function () {
   for (let i = 0; i < 10; i++) {
-    // Add a container
-    $("#rsoContainer").append('<div class="rsoCard"></div>')
+    // Give each displayed RSO a unique id so grabbing
+    // a specific id will be much easier to do.
+    $("#rsoContainer").append(`<div class="rsoCard" id=rso-${i}></div>`)
 
     // Load the content into the event card
     $(".rsoCard")
@@ -13,3 +14,16 @@ $(document).ready(function () {
       })
   }
 })
+
+async function getRSO(searchQuery = "") {
+  // Need the uuid of the user to make queries
+  user = getUser()
+  return await callAPI(
+    "/getRSO.php",
+    {
+      userId: user.stuId,
+      query: searchQuery,
+    },
+    "POST"
+  )
+}

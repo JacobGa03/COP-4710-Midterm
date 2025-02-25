@@ -64,7 +64,13 @@
         })
 
         // Load the search bar
-        $("#search-placeholder").load("components\\search.html", function () {})
+        $("#search-placeholder").load("components\\search.html", function () {
+          $("#submitSearch").click(function (e) {
+            e.preventDefault()
+            const query = $("#searchBox").val()
+            console.log("Search query:", query)
+          })
+        })
         $("#pagination-placeholder").load(
           "components\\bottom_pagination.html",
           function () {}
