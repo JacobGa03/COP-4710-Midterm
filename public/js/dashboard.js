@@ -1,4 +1,7 @@
 $(document).ready(function () {
+  // Load the modal structure
+  $("#modal-placeholder").load("components/event_modal.html")
+
   // Load events
   for (let i = 0; i < 10; i++) {
     // TODO: Call API to grab a list of events
@@ -10,7 +13,16 @@ $(document).ready(function () {
     // Use the callback to insert anything else into the card that we want to modify
     $(".eventCard")
       .last()
-      .load("components/event_card.html", function () {})
+      .load("components/event_card.html", function () {
+        // Load the modal content for the event card when the link is clicked
+        $(this)
+          .find(".card-body a")
+          .on("click", function () {
+            const eventId = $(this).closest(".eventCard").attr("id")
+            console.log(`event id ${eventId}`)
+            loadEventModal(eventId)
+          })
+      })
   }
 })
 
@@ -25,4 +37,46 @@ async function getEvents(searchQuery = "") {
     },
     "POST"
   )
+}
+
+function loadEventModal(eventId) {
+  // Fetch the event information based on the rsoId
+  const eventInfo = getEventInfo(eventId) // Replace with actual function to fetch RSO info
+
+  // Populate the modal with the event information
+  $("#event-modal .modal-title").text(eventInfo.name)
+  $("#event-modal .modal-body").html(`
+    <p>Type: ${eventInfo.type}</p>
+    <p>Description: ${eventInfo.description}</p>
+  `)
+
+  // Show the modal
+  $("#event-modal").modal("show")
+}
+
+function getEventInfo(eventId) {
+  // Generate random event information based on the eventId
+  const eventNames = ["Conference", "Workshop", "Seminar", "Meetup", "Webinar"]
+  const eventTypes = [
+    "Business",
+    "Education",
+    "Technology",
+    "Health",
+    "Networking",
+  ]
+  const eventDescriptions = [
+    "An insightful event about the latest trends.",
+    "A hands-on workshop to enhance your skills.",
+    "A seminar to discuss important topics.",
+    "A meetup to network with like-minded individuals.",
+    "An online webinar to learn from experts.",
+  ]
+
+  const index = parseInt(eventId.split("-")[1]) % eventNames.length
+
+  return {
+    name: eventNames[index],
+    type: eventTypes[index],
+    description: eventDescriptions[index],
+  }
 }
