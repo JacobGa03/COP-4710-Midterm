@@ -1,6 +1,9 @@
 $(document).ready(function () {
   // Load the modal structure
   $("#modal-placeholder").load("components/event_modal.html")
+  $("#create-event-modal-placeholder").load(
+    "components/create_event_modal.html"
+  )
 
   // Load events
   for (let i = 0; i < 10; i++) {
@@ -19,11 +22,36 @@ $(document).ready(function () {
           .find(".card-body a")
           .on("click", function () {
             const eventId = $(this).closest(".eventCard").attr("id")
-            console.log(`event id ${eventId}`)
             loadEventModal(eventId)
           })
       })
   }
+
+  // Load the create event modal to give users the ability to create an event
+  $(document).on("submit", "#addEventForm", function (e) {
+    e.preventDefault()
+    const eventName = $("#eventName").val()
+    const eventVisibility = $("#eventVisibility option:selected").val()
+    const eventDate = $("#eventDate").val()
+    const eventLocation = $("#eventLocation").val()
+    const eventDescription = $("#eventDescription").val()
+
+    // Add your logic to save the event here
+    console.log("Event added:", {
+      eventName,
+      eventVisibility,
+      eventDate,
+      eventLocation,
+      eventDescription,
+    })
+
+    // Close the modal
+    $("#addEventModal").modal("hide")
+
+    // Optionally, refresh the event list or add the new event to the DOM
+    // For example, you can call a function to reload the events
+    // loadEvents()
+  })
 })
 
 async function getEvents(searchQuery = "") {

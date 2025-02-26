@@ -34,12 +34,26 @@
   </head>
   <!-- Modal placeholder for RSO information -->
   <div id="modal-placeholder"></div>
+  <div id="create-event-modal-placeholder"></div>
   <body>
     <!-- Navbar for users once logged in -->
     <div id="navbar-placeholder"></div>
 
     <!-- Search box -->
     <div id="search-placeholder"></div>
+
+    <!-- Add Event Button -->
+    <div class="container mt-3">
+      <button
+        id="createEvent"
+        type="button"
+        class="btn btn-primary"
+        data-toggle="modal"
+        data-target="#addEventModal"
+      >
+        Add Event
+      </button>
+    </div>
 
     <!-- Scrollable table to display the different events -->
     <div class="container-fluid">

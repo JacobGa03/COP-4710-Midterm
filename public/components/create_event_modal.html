@@ -1,0 +1,102 @@
+<div
+  class="modal fade"
+  id="addEventModal"
+  tabindex="-1"
+  aria-labelledby="addEventModalLabel"
+  aria-hidden="true"
+>
+  <div
+    class="modal-dialog modal-dialog-centered"
+    role="document"
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5
+          class="modal-title"
+          id="addEventModalLabel"
+        >
+          Add Event
+        </h5>
+      </div>
+      <div class="modal-body">
+        <form id="addEventForm">
+          <div class="form-group">
+            <label for="eventName">Event Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="eventName"
+              required
+            />
+          </div>
+          <!-- Select a event type ie. public, private, RSO -->
+          <div class="form-group">
+            <label for="eventVisibility">Event Visibility</label>
+            <select
+              class="form-control"
+              id="eventVisibility"
+              required
+            >
+              <option value="public">Public (Anyone Can See This)</option>
+              <option value="private">
+                Private (Only Students at Your University)
+              </option>
+              <option value="rso">RSO (Only Students in Your RSO)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="eventDate">Event Date</label>
+            <input
+              type="date"
+              class="form-control"
+              id="eventDate"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="eventTime">Event Time</label>
+            <input
+              type="time"
+              class="form-control"
+              id="eventTime"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="eventLocation">Event Location</label>
+            <input
+              type="text"
+              class="form-control"
+              id="eventLocation"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="eventDescription">Event Description</label>
+            <textarea
+              class="form-control"
+              id="eventDescription"
+              rows="3"
+              required
+            ></textarea>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="btn btn-success"
+            >
+              Create
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
