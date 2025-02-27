@@ -36,11 +36,51 @@
     <div id="navbar-placeholder"></div>
 
     <!-- Display profile information -->
-    <div class="container-fluid">
-      <h1 id="displayName">Name</h1>
-      <h2 id="displaySchool">School</h2>
+    <!-- All users have this! -->
+    <div
+      id="infoContainer"
+      class="container-fluid"
+    >
+      <div
+        class="row"
+        id="row-0"
+      >
+        <div
+          id="nameTile"
+          class="col-sm-4"
+        >
+          <h3 id="displayName"></h3>
+          <p>Name</p>
+        </div>
+      </div>
+      <div
+        class="row"
+        id="row-1"
+      >
+        <div
+          id="emailTile"
+          class="col-sm-4"
+        >
+          <h3 id="displayEmail"></h3>
+          <p>Email</p>
+        </div>
+      </div>
+      <div
+        class="row"
+        id="row-2"
+      >
+        <div
+          id="universityTile"
+          class="col-sm-10"
+        >
+          <h3 id="displaySchool"></h3>
+          <p>University</p>
+        </div>
+      </div>
     </div>
+    <!-- Display user specific information -->
 
+    <!-- Sign out of the application -->
     <button
       type="button"
       class="btn btn-primary"

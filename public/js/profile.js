@@ -1,8 +1,13 @@
 $(document).ready(function () {
   user = getUser()
-  // Insert their name and school
-  $("#displayName").append(`<h2>${user["email"]}</h2>`)
-  $("#displaySchool").append(`<h2>${user["university"]}</h2>`)
+
+  keys = ["name", "email", "university"]
+
+  var rows = $("#infoContainer").children()
+  // Fill in the information for the different tiles
+  for (let i = 0; i < rows.length; i++) {
+    $(`#row-${i} h3`).text(user[keys[i]])
+  }
 
   // Enable the button to sign the user out and direct them back to the home page
   $("#signOut").click(function (e) {
