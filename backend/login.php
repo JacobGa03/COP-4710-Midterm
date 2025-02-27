@@ -19,7 +19,16 @@ else{
         returnJson(['stu_id' => $row['stu_id'], 'university' => $row['university'], 'email' => $row['email']]);
     }
     else{
-        returnError(CODE_NOT_FOUND, 'No records found');
+        $stmt = $conn->prepare("SELECT sa_id,university,email FROM Super_Admins WHERE email =? AND password =?");
+        $stmt->bind_param("ss", $data['email'], $data['password']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if($row = $result->fetch_assoc()){
+            returnJson(['sa_id' => $row['sa_id'], 'university' => $row['university'], 'email' => $row['email']]);
+        }
+        else{
+            returnError(CODE_NOT_FOUND, 'User not found');
+        }
     }
 
     $stmt->close();
