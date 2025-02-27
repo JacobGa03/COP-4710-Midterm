@@ -45,16 +45,54 @@ $(document).ready(function () {
     return true
   }
   // Submit button
-  $("#submitLogin").click(function () {
+  $("#submitLogin").click(function (e) {
     validatePassword()
     email.dispatchEvent(new Event("blur"))
 
     // Ensure that both email and password were entered correctly
     if (passwordError && emailError) {
-      window.history.pushState("", "", "dashboard.html")
-      // return true
+      e.preventDefault()
+      // Grab the email and hash the password
+      let emailVal = $("#enterEmail").val()
+      let password = new jsSHA("SHA-256", "TEXT", { encoding: "UTF8" })
+      password.update($("#enterPassword").val())
+      let hashedPassword = password.getHash("HEX")
+
+      console.log(`${emailVal} and ${hashedPassword}`)
+
+      // Call the login function and handle the response
+      login(emailVal, hashedPassword)
+        .then(([code, result]) => {
+          if (code != 200) {
+            // Handle error
+            $("#enterEmail").removeClass("is-valid").addClass("is-invalid")
+            $("#enterPassword").removeClass("is-valid").addClass("is-invalid")
+            $("#passwordError").show()
+            return false
+          } else {
+            // Save the user information into a cookie
+            saveUserCookie(result)
+            // Redirect to dashboard
+            window.location.replace("dashboard.html")
+            return true
+          }
+        })
+        .catch((error) => {
+          // Handle any errors that occurred during the API call
+          console.error("Error during login:", error)
+          $("#enterEmail").removeClass("is-valid").addClass("is-invalid")
+        })
+      return false
     } else {
       return false
     }
   })
 })
+
+async function login(email, password) {
+  return await callAPI(
+    "/login.php",
+    { email: email, password: password },
+    "POST"
+  )
+}

@@ -77,16 +77,47 @@ $(document).ready(function () {
   })
 
   // Handle submit
-  $("#submitRegister").click(function () {
+  $("#submitRegister").click(function (e) {
     validateConfirmationPass()
     validatePassword()
     email.dispatchEvent(new Event("blur"))
 
+    // Grab the email and hash the password
+    let emailVal = $("#enterEmail").val()
+    let password = new jsSHA("SHA-256", "TEXT", { encoding: "UTF8" })
+    password.update($("#enterPassword").val())
+    let hashedPassword = password.getHash("HEX")
+    let university = $("#enterSchool").val()
+    let userType = ""
+
     // Ensure that both email and password were entered correctly
     if (passwordError && emailError && confirmationPasswordError) {
-      return true
+      e.preventDefault()
+      // Try to register the user
+      register(emailVal, hashedPassword, university, userType).then(
+        ([code, result]) => {
+          if (code != 200) {
+            return false
+          } else {
+            // Save the user information into a cookie
+            saveUserCookie(result)
+            // Redirect to dashboard
+            window.location.replace("dashboard.html")
+            return true
+          }
+        }
+      )
     } else {
       return false
     }
   })
 })
+
+async function register(email, password, university, userType) {
+  return await callAPI(
+    "/register.php",
+    // TODO: Add userType to the request
+    { email: email, password: password, university: university },
+    "POST"
+  )
+}

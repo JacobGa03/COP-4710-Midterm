@@ -1,0 +1,31 @@
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+  padding-top: 66px;
+}
+
+.nav-item .nav-link {
+  font-size: 1rem; /* Increase the font size */
+  padding: 0.5rem 1rem; /* Adjust padding for better spacing */
+}
+.navbar {
+  background-color: #6200ea;
+}
+.navbar-brand {
+  color: #fff;
+  font-weight: 500;
+}
+.navbar-brand:hover {
+  color: #fff;
+}
+
+.modal-backdrop {
+  display: none;
+  z-index: 1040 !important;
+}
+
+.modal-content {
+  margin: 2px auto;
+  z-index: 1100 !important;
+}

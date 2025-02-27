@@ -12,6 +12,8 @@ services:
       - db
     env_file:
       - .env
+    networks:
+      - mynetwork
 
   db:
     image: mysql:5.7
@@ -22,6 +24,12 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - mynetwork
 
 volumes:
   db_data:
+
+networks:
+  mynetwork:
+    driver: bridge
