@@ -12,26 +12,30 @@ async function testPHP() {
 async function callAPI(endpoint, requestData, method) {
   let url = BASE_URL + BACKEND + endpoint
 
-  // Format the JSON request
-  const response = await formatResponse(url, method, requestData)
-  // Call the api
-  const result = await response.json()
+  try {
+    // Format the JSON request
+    const response = await formatResponse(url, method, requestData)
+    // Call the api
+    const result = await response.json()
 
-  // Determine if response was successful
-  // Decode more of the responses
-  switch (response.status) {
-    case 200:
-      console.log("Successful request...")
-      return [response.status, result]
-    case 404:
-      console.log("Error result not found...")
-      return [response.status, {}]
-    case 500:
-      console.log("Internal server error...")
-      return [response.status, {}]
-    default:
-      console.log("Unexpected Error...")
-      return [response.status, {}]
+    // Determine if response was successful
+    // Decode more of the responses
+    switch (response.status) {
+      case 200:
+        console.log("Successful request...")
+        return [response.status, result]
+      case 404:
+        console.log("Error result not found...")
+        return [response.status, {}]
+      case 500:
+        console.log("Internal server error...")
+        return [response.status, {}]
+      default:
+        console.log("Unexpected Error...")
+        return [response.status, {}]
+    }
+  } catch (e) {
+    console.log(e)
   }
 }
 

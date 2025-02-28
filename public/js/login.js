@@ -58,8 +58,6 @@ $(document).ready(function () {
       password.update($("#enterPassword").val())
       let hashedPassword = password.getHash("HEX")
 
-      console.log(`${emailVal} and ${hashedPassword}`)
-
       // Call the login function and handle the response
       login(emailVal, hashedPassword)
         .then(([code, result]) => {
