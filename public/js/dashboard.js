@@ -2,7 +2,34 @@ $(document).ready(function () {
   // Load the modal structure
   $("#modal-placeholder").load("components/event_modal.html")
   $("#create-event-modal-placeholder").load(
-    "components/create_event_modal.html"
+    "components/create_event_modal.html",
+    function () {
+      // Ensure that dates can only be chosen for today or after
+      $("#eventDate").attr("min", new Date().toISOString().split("T")[0])
+      // Create an event
+      $("#createEventButton").click(function (e) {
+        e.preventDefault()
+        const name = $("#eventName").val()
+        const contactInfo = $("#eventContactInfo").val()
+        const category = $("#eventCategory").val()
+        const visibility = $("#eventVisibility").val()
+        const date = $("#eventDate").val()
+        const time = $("#eventTime").val()
+        const location = $("#eventLocation").val()
+        const description = $("#eventDescription").val()
+
+        createEvent(
+          name,
+          contactInfo,
+          category,
+          visibility,
+          date,
+          time,
+          location,
+          description
+        )
+      })
+    }
   )
 
   loadEventCards("")
@@ -60,4 +87,30 @@ function loadEventModal(event) {
 
   // Show the modal
   $("#event-modal").modal("show")
+}
+
+async function createEvent(
+  name,
+  contactInfo,
+  category,
+  visibility,
+  date,
+  time,
+  location,
+  description
+) {
+  await callAPI(
+    "/createEVent.php",
+    {
+      name: name,
+      contact_info: contactInfo,
+      category: category,
+      visibility: visibility,
+      date: date,
+      time: time,
+      location: location,
+      description: description,
+    },
+    "POST"
+  )
 }

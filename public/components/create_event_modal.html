@@ -29,6 +29,24 @@
               required
             />
           </div>
+          <div class="form-group">
+            <label for="eventContactInfo">Contact Info</label>
+            <input
+              type="text"
+              class="form-control"
+              id="eventContactInfo"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="eventCategory">Event Category</label>
+            <input
+              type="text"
+              class="form-control"
+              id="eventCategory"
+              required
+            />
+          </div>
           <!-- Select a event type ie. public, private, RSO -->
           <div class="form-group">
             <label for="eventVisibility">Event Visibility</label>
@@ -50,6 +68,7 @@
               type="date"
               class="form-control"
               id="eventDate"
+              min=""
               required
             />
           </div>
@@ -82,6 +101,7 @@
           </div>
           <div class="modal-footer">
             <button
+              id="createEventButton"
               type="button"
               class="btn btn-secondary"
               data-dismiss="modal"

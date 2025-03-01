@@ -1,6 +1,8 @@
 $(document).ready(function () {
   // Load the modal structure
   $("#modal-placeholder").load("components/event_modal.html")
+  $("#create-rso-modal-placeholder").load("components/create_rso_modal.html")
+
   // On initial load, get ALL (visible) events
   loadRSOCards("")
 })
