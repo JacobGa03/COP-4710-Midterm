@@ -7,7 +7,7 @@ $(document).ready(function () {
       // Ensure that dates can only be chosen for today or after
       $("#eventDate").attr("min", new Date().toISOString().split("T")[0])
       // Create an event
-      $("#createEventButton").click(function (e) {
+      $("#createEventButton").on("click", function (e) {
         e.preventDefault()
         const name = $("#eventName").val()
         const contactInfo = $("#eventContactInfo").val()
@@ -17,13 +17,18 @@ $(document).ready(function () {
         const time = $("#eventTime").val()
         const location = $("#eventLocation").val()
         const description = $("#eventDescription").val()
+        // Send a datetime ISO String which represents the date and time as one string
+        const datetime = new Date(`${date}T${time}:00`).toISOString()
 
+        console.log(`${new Date(`${date}T${time}:00`).toISOString()}`)
+
+        // TODO: Fix this so it only takes `datetime` for the time and date of the event
         createEvent(
           name,
           contactInfo,
           category,
           visibility,
-          date,
+          datetime,
           time,
           location,
           description
@@ -99,9 +104,11 @@ async function createEvent(
   location,
   description
 ) {
+  console.log(`${time} and ${date}`)
   await callAPI(
-    "/createEVent.php",
+    "/createEvent.php",
     {
+      stu_Id: getUser().stuId,
       name: name,
       contact_info: contactInfo,
       category: category,

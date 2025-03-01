@@ -1,7 +1,18 @@
 $(document).ready(function () {
   // Load the modal structure
   $("#modal-placeholder").load("components/event_modal.html")
-  $("#create-rso-modal-placeholder").load("components/create_rso_modal.html")
+  $("#create-rso-modal-placeholder").load(
+    "components/create_rso_modal.html",
+    function (e) {
+      $("#createRSOButton").on("click", function (e) {
+        e.preventDefault()
+        rsoName = $("#RSOName").val()
+        // TODO: Add more fields here
+
+        createRSO(rsoName)
+      })
+    }
+  )
 
   // On initial load, get ALL (visible) events
   loadRSOCards("")
@@ -53,10 +64,20 @@ function loadRSOModal(rso) {
   // Populate the modal with the RSO information
   $("#event-modal .modal-title").text(rso.name)
   $("#event-modal .modal-body").html(`
-    <p>Type: ${rsoInfo.type}</p>
-    <p>Description: ${rsoInfo.description}</p>
+    <p>Type: ${rso.type}</p>
+    <p>Description: ${rso.description}</p>
   `)
 
   // Show the modal
   $("#event-modal").modal("show")
+}
+
+// TODO: University will need to be changed to university id
+async function createRSO(name) {
+  user = getUser()
+  await callAPI(
+    "/createRSO.php",
+    { name: name, admin_id: user.stuId, university: user.university },
+    "POST"
+  )
 }
