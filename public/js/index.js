@@ -94,6 +94,12 @@ function getUser() {
   }
   return user
 }
+// Get the user type of the current user. Distinction is important
+// since the different type of users have different things they can do.
+function getUserType() {
+  user = getUser()
+  return user && user.hasOwnProperty("stu_id") ? "student" : "super admin"
+}
 // Delete user's cookie and send them to the home page
 async function logout() {
   document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
