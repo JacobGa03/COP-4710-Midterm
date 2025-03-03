@@ -34,29 +34,35 @@ async function getRSO(searchQuery = "") {
 function loadRSOCards(query) {
   $("#rsoContainer").empty()
   getRSO(query).then(([code, result]) => {
-    result["Results"].forEach((rso) => {
-      // Give each displayed RSO a unique id so grabbing
-      // a specific id will be much easier to do.
+    if (result["Results"] === undefined) {
       $("#rsoContainer").append(
-        `<div class="rsoCard" id="rso-${rso.rso_id}"></div>`
+        '<p style="display: flex; justify-content: center; align-items: center; height: 100%;">No RSOs. Create Some!</p>'
       )
+    } else {
+      result["Results"].forEach((rso) => {
+        // Give each displayed RSO a unique id so grabbing
+        // a specific id will be much easier to do.
+        $("#rsoContainer").append(
+          `<div class="rsoCard" id="rso-${rso.rso_id}"></div>`
+        )
 
-      // Load the content into the event card
-      $(".rsoCard")
-        .last()
-        .load("components/event_card.html", function () {
-          // This callback function runs after the content is loaded
-          $(this).find("h5").text(rso.name)
-          $(this).find("h6").text("RSO Type")
+        // Load the content into the event card
+        $(".rsoCard")
+          .last()
+          .load("components/event_card.html", function () {
+            // This callback function runs after the content is loaded
+            $(this).find("h5").text(rso.name)
+            $(this).find("h6").text("RSO Type")
 
-          // Load the modal content when the link is clicked
-          $(this)
-            .find(".card-body a")
-            .on("click", function () {
-              loadRSOModal(rso)
-            })
-        })
-    })
+            // Load the modal content when the link is clicked
+            $(this)
+              .find(".card-body a")
+              .on("click", function () {
+                loadRSOModal(rso)
+              })
+          })
+      })
+    }
   })
 }
 

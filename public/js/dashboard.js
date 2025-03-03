@@ -43,29 +43,35 @@ $(document).ready(function () {
 function loadEventCards(query) {
   $("#eventContainer").empty()
   getEvents(query).then(([code, result]) => {
-    result["Results"].forEach((event) => {
-      // Add a container w/ id = uuid of the event.
-      // This will make loading info about an event easier.
+    if (result["Results"] === undefined) {
       $("#eventContainer").append(
-        `<div class="eventCard" id="event-${event.e_id}"></div>`
+        '<p style="display: flex; justify-content: center; align-items: center; height: 100%;">No Events. Go out and Create Some!</p>'
       )
+    } else {
+      result["Results"].forEach((event) => {
+        // Add a container w/ id = uuid of the event.
+        // This will make loading info about an event easier.
+        $("#eventContainer").append(
+          `<div class="eventCard" id="event-${event.e_id}"></div>`
+        )
 
-      // Grab the most recently added event card and inject the 'event_card.html' into it.
-      // Use the callback to insert anything else into the card that we want to modify
-      $(".eventCard")
-        .last()
-        .load("components/event_card.html", function () {
-          // This callback function runs after the content is loaded
-          $(this).find("h5").text(event.name)
-          $(this).find("h6").text(event.category)
-          // Load the modal content for the event card when the link is clicked
-          $(this)
-            .find(".card-body a")
-            .on("click", function () {
-              loadEventModal(event)
-            })
-        })
-    })
+        // Grab the most recently added event card and inject the 'event_card.html' into it.
+        // Use the callback to insert anything else into the card that we want to modify
+        $(".eventCard")
+          .last()
+          .load("components/event_card.html", function () {
+            // This callback function runs after the content is loaded
+            $(this).find("h5").text(event.name)
+            $(this).find("h6").text(event.category)
+            // Load the modal content for the event card when the link is clicked
+            $(this)
+              .find(".card-body a")
+              .on("click", function () {
+                loadEventModal(event)
+              })
+          })
+      })
+    }
   })
 }
 
@@ -104,7 +110,6 @@ async function createEvent(
   location,
   description
 ) {
-  console.log(`${time} and ${date}`)
   await callAPI(
     "/createEvent.php",
     {
