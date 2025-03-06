@@ -267,7 +267,7 @@ CREATE TABLE
   `Students` (
     `stu_id` char(36) NOT NULL,
     `password` varchar(64) DEFAULT NULL,
-    `email` varchar(30) DEFAULT NULL,
+    `email` varchar(30) DEFAULT NULL UNIQUE,
     `university` char(36) DEFAULT NULL,
     PRIMARY KEY (`stu_id`),
     UNIQUE KEY `email` (`email`)
@@ -339,7 +339,7 @@ CREATE TABLE
   `Super_Admins` (
     `sa_id` char(36) NOT NULL,
     `password` varchar(64) DEFAULT NULL,
-    `email` varchar(30) DEFAULT NULL,
+    `email` varchar(30) DEFAULT NULL UNIQUE,
     `university` char(36) DEFAULT NULL,
     PRIMARY KEY (`sa_id`),
     UNIQUE KEY `email` (`email`)
@@ -404,8 +404,9 @@ DROP TABLE IF EXISTS `University`;
 CREATE TABLE
   `University` (
     `u_id` char(36) NOT NULL,
-    `name` varchar(40) DEFAULT NULL,
-    PRIMARY KEY (`u_id`)
+    `name` varchar(50) NOT NULL,
+    PRIMARY KEY (`u_id`),
+    UNIQUE KEY `name` (`name`)
   ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
 
 /*!40101 SET character_set_client = @saved_cs_client */;
