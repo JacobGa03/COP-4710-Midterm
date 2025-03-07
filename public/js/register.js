@@ -89,12 +89,13 @@ $(document).ready(function () {
     let hashedPassword = password.getHash("HEX")
     let university = $("#enterSchool").val()
     let userType = $("input[name='flexRadioDefault']:checked").val()
+    let name = $("#enterName").val()
 
     // Ensure that both email and password were entered correctly
     if (passwordError && emailError && confirmationPasswordError) {
       e.preventDefault()
       // Try to register the user
-      register(emailVal, hashedPassword, university, userType).then(
+      register(emailVal, hashedPassword, university, userType, name).then(
         ([code, result]) => {
           if (code != 200) {
             return false
@@ -113,15 +114,15 @@ $(document).ready(function () {
   })
 })
 
-async function register(email, password, university, userType) {
+async function register(email, password, university, userType, name) {
   return await callAPI(
     "/register.php",
-    // TODO: Add userType to the request
     {
       email: email,
       password: password,
       university: university,
       role: userType,
+      name: name,
     },
     "POST"
   )

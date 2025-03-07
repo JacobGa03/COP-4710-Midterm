@@ -269,6 +269,7 @@ CREATE TABLE
     `password` varchar(64) DEFAULT NULL,
     `email` varchar(30) DEFAULT NULL UNIQUE,
     `university` char(36) DEFAULT NULL,
+    `name` varchar(40),
     PRIMARY KEY (`stu_id`),
     UNIQUE KEY `email` (`email`)
   ) ENGINE = InnoDB DEFAULT CHARSET = latin1;

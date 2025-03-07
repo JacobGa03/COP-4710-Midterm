@@ -6,6 +6,7 @@ $email = $data['email'];
 $password = $data['password'];
 $university = $data['university'];
 $role = $data['role'];
+$name = $data['name'];
 
 // * Take in the 'email' (String), 'password' (SHA256 hashed), 'university' (String), and 'role' (String).
 // * Returned is the new information of the user. All important id's will be returned to ensure entities
@@ -21,8 +22,8 @@ if ($conn->connect_error) {
     // MySQL already has a check for a unique email, so simply trying an
     // insert and catching an error for duplicates will be enough.
     if ($role == 'student') {
-        $stmt = $conn->prepare("INSERT INTO Students (stu_id, email, password, university) VALUES(UUID(),?,?,?)");
-        $stmt->bind_param("sss", $email, $password, $uni_id);
+        $stmt = $conn->prepare("INSERT INTO Students (stu_id, email, password, university, name) VALUES(UUID(),?,?,?,?)");
+        $stmt->bind_param("ssss", $email, $password, $uni_id, $name);
         if ($stmt->execute()) {
             // Grab the new uuid of the user
             $newStmt = $conn->prepare("SELECT stu_id from Students where email = ?");
@@ -31,7 +32,7 @@ if ($conn->connect_error) {
             $newResult = $newStmt->get_result();
             $newRow = $newResult->fetch_assoc();
 
-            returnJson(['stu_id' => $newRow['stu_id'], 'email' => $email, 'u_id' => $uni_id]);
+            returnJson(['stu_id' => $newRow['stu_id'], 'email' => $email, 'u_id' => $uni_id, 'name' => $name]);
         } else {
             if ($conn->errno == 1062) { // 1062 is the error code for duplicate entry
                 returnError(CODE_CONFLICT, 'User already exists');
@@ -44,8 +45,8 @@ if ($conn->connect_error) {
     }
     // Create a super admin 
     else {
-        $stmt = $conn->prepare("INSERT INTO Super_Admins (sa_id, email, password, university) VALUES(UUID(),?,?,?)");
-        $stmt->bind_param("sss", $email, $password, $university);
+        $stmt = $conn->prepare("INSERT INTO Super_Admins (sa_id, email, password, university, name) VALUES(UUID(),?,?,?,?)");
+        $stmt->bind_param("ssss", $email, $password, $university, $name);
         if ($stmt->execute()) {
             // Get the UUID of the new user
             $newStmt = $conn->prepare("SELECT sa_id from Super_Admins where email = ?");
@@ -53,7 +54,7 @@ if ($conn->connect_error) {
             $newStmt->execute();
             $newResult = $newStmt->get_result();
             $newRow = $newResult->fetch_assoc();
-            returnJson(['sa_id' => $newRow['sa_id'], 'email' => $email, 'u_id' => $uni_id]);
+            returnJson(['sa_id' => $newRow['sa_id'], 'email' => $email, 'u_id' => $uni_id, 'name' => $name]);
         } else {
             if ($conn->errno == 1062) { // 1062 is the error code for duplicate entry
                 returnError(CODE_CONFLICT, 'User already exists');

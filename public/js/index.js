@@ -22,16 +22,12 @@ async function callAPI(endpoint, requestData, method) {
     // Decode more of the responses
     switch (response.status) {
       case 200:
-        console.log("Successful request...")
         return [response.status, result]
       case 404:
-        console.log("Error result not found...")
         return [response.status, {}]
       case 500:
-        console.log("Internal server error...")
         return [response.status, {}]
       default:
-        console.log("Unexpected Error...")
         return [response.status, {}]
     }
   } catch (e) {
@@ -104,4 +100,8 @@ function getUserType() {
 async function logout() {
   document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
   window.location.replace("landing.html")
+}
+// Get the university name for a given University ID
+async function getUniversityName(uni_id) {
+  return await callAPI("/getUniversityName.php", { u_id: uni_id }, "POST")
 }

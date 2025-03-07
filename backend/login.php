@@ -15,7 +15,7 @@ if ($conn->connect_error) {
     returnError(CODE_SERVER_ERROR, 'Could not connect to the database');
 } else {
     // Prepare sql statement
-    $stmt = $conn->prepare("SELECT stu_id,university,email FROM Students WHERE email =? AND password =?");
+    $stmt = $conn->prepare("SELECT stu_id,university,email,name FROM Students WHERE email =? AND password =?");
     $stmt->bind_param("ss", $data['email'], $data['password']);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -23,7 +23,7 @@ if ($conn->connect_error) {
     // User is a student
     if ($row = $result->fetch_assoc()) {
         // TODO: Grab a list of the RSO's the user is in (RSOMember) & a list of RSOs the user is an Admin of
-        returnJson(['stu_id' => $row['stu_id'], 'university' => $row['university'], 'email' => $row['email']]);
+        returnJson(['stu_id' => $row['stu_id'], 'university' => $row['university'], 'email' => $row['email'], 'name' => $row['name']]);
     }
     // User is a super admin
     else {
@@ -32,7 +32,7 @@ if ($conn->connect_error) {
         $stmt->execute();
         $result = $stmt->get_result();
         if ($row = $result->fetch_assoc()) {
-            returnJson(['sa_id' => $row['sa_id'], 'university' => $row['university'], 'email' => $row['email']]);
+            returnJson(['sa_id' => $row['sa_id'], 'university' => $row['university'], 'email' => $row['email'], 'name' => $row['name']]);
         } else {
             returnError(CODE_NOT_FOUND, 'User not found');
         }
