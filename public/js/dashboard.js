@@ -20,16 +20,14 @@ $(document).ready(function () {
         // Send a datetime ISO String which represents the date and time as one string
         const datetime = new Date(`${date}T${time}:00`).toISOString()
 
-        console.log(`${new Date(`${date}T${time}:00`).toISOString()}`)
+        console.log(`${datetime}`)
 
-        // TODO: Fix this so it only takes `datetime` for the time and date of the event
         createEvent(
           name,
           contactInfo,
           category,
           visibility,
-          datetime,
-          time,
+          datetime.replace("T", " "),
           location,
           description
         )
@@ -106,20 +104,18 @@ async function createEvent(
   category,
   visibility,
   date,
-  time,
   location,
   description
 ) {
   await callAPI(
     "/createEvent.php",
     {
-      stu_Id: getUser().stuId,
+      u_id: getUser().u_id,
       name: name,
       contact_info: contactInfo,
       category: category,
       visibility: visibility,
-      date: date,
-      time: time,
+      time: date,
       location: location,
       description: description,
     },

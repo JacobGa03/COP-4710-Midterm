@@ -11,8 +11,8 @@ wait_for_mysql() {
 # Initialize the database
 initialize_db() {
   echo "Initializing database..."
-  # Drops old tables 
-  mysql -h db -u${MYSQL_USER} -p${MYSQL_PASSWORD} -e "DROP DATABASE IF EXISTS ${MYSQL_DATABASE}; CREATE DATABASE ${MYSQL_DATABASE};"
+  # # Drops old tables 
+  # mysql -h db -u${MYSQL_USER} -p${MYSQL_PASSWORD} -e "DROP DATABASE IF EXISTS ${MYSQL_DATABASE}; CREATE DATABASE ${MYSQL_DATABASE};"
   # Clean slate
   mysql -h db -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} < /var/lib/mysql/DB_Data.sql
 }

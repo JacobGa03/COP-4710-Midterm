@@ -11,7 +11,7 @@ $(document).ready(function () {
 
   // Get the university's name and display
   // Make an async call to the API to grab the actual name.
-  getUniversityName(user.university)
+  getUniversityName(user.u_id)
     .then(([code, result]) => {
       if (code == 200) {
         $(`#row-2 h3`).text(result.name)

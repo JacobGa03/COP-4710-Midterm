@@ -23,7 +23,7 @@ if ($conn->connect_error) {
     // User is a student
     if ($row = $result->fetch_assoc()) {
         // TODO: Grab a list of the RSO's the user is in (RSOMember) & a list of RSOs the user is an Admin of
-        returnJson(['stu_id' => $row['stu_id'], 'university' => $row['university'], 'email' => $row['email'], 'name' => $row['name']]);
+        returnJson(['stu_id' => $row['stu_id'], 'u_id' => $row['university'], 'email' => $row['email'], 'name' => $row['name']]);
     }
     // User is a super admin
     else {
