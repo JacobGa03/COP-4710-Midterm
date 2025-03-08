@@ -16,6 +16,7 @@ $(document).ready(function () {
       if (code == 200) {
         $(`#row-2 h3`).text(result.name)
       } else {
+        $(`#row-2 h3`).text("State University")
         console.error("Error fetching university name:", result)
       }
     })

@@ -5,6 +5,7 @@ $(document).ready(function () {
   email.addEventListener("blur", () => {
     let regex = /^([_\-\.0-9a-zA-Z]+)@([_\-\.0-9a-zA-Z]+)\.([a-zA-Z]){2,7}$/
     let s = email.value
+    $("#emailInput .invalid-feedback").text("Please enter a valid email")
 
     // Valid email
     if (regex.test(s)) {
@@ -97,7 +98,13 @@ $(document).ready(function () {
       // Try to register the user
       register(emailVal, hashedPassword, university, userType, name).then(
         ([code, result]) => {
-          if (code != 200) {
+          if (code == 409) {
+            console.log("email is already taken")
+            $("#enterEmail").removeClass("is-valid").addClass("is-invalid")
+            $("#emailInput .invalid-feedback").text("Email is already taken")
+            $("#emailError").text("Email is already taken")
+            $("#emailError").show()
+            emailError = false
             return false
           } else {
             // Save the user information into a cookie

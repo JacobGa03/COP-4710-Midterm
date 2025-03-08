@@ -27,7 +27,7 @@ if ($conn->connect_error) {
     }
     // User is a super admin
     else {
-        $stmt = $conn->prepare("SELECT sa_id,university,email FROM Super_Admins WHERE email =? AND password =?");
+        $stmt = $conn->prepare("SELECT sa_id,university,email,name FROM Super_Admins WHERE email =? AND password =?");
         $stmt->bind_param("ss", $data['email'], $data['password']);
         $stmt->execute();
         $result = $stmt->get_result();
