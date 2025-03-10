@@ -27,7 +27,7 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    `Public_Event` (
+    Public_Event (
         `e_id` char(36) NOT NULL,
         `visibility` varchar(20) DEFAULT NULL,
         PRIMARY KEY (`e_id`),
