@@ -3,6 +3,7 @@
 $(document).ready(function () {
   // Validate Email
   const email = document.getElementById("enterEmail")
+  $("#emailError").text("Please enter a valid email")
   let emailError = true
   email.addEventListener("blur", () => {
     let regex = /^([_\-\.0-9a-zA-Z]+)@([_\-\.0-9a-zA-Z]+)\.([a-zA-Z]){2,7}$/
@@ -61,11 +62,13 @@ $(document).ready(function () {
       // Call the login function and handle the response
       login(emailVal, hashedPassword)
         .then(([code, result]) => {
-          if (code != 200) {
-            // Handle error
+          if (code == 404) {
+            // Show that the email wasn't found
             $("#enterEmail").removeClass("is-valid").addClass("is-invalid")
-            $("#enterPassword").removeClass("is-valid").addClass("is-invalid")
-            $("#passwordError").show()
+            $("#emailError").text("Email not found")
+            $("#emailError").show()
+            emailError = false
+
             return false
           } else {
             // Save the user information into a cookie
