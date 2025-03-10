@@ -27,6 +27,14 @@ CREATE TABLE
     );
 
 CREATE TABLE
+    `Public_Event` (
+        `e_id` char(36) NOT NULL,
+        `visibility` varchar(20) DEFAULT NULL,
+        PRIMARY KEY (`e_id`),
+        CONSTRAINT `Public_Event_ibfk_1` FOREIGN KEY (`e_id`) REFERENCES `Events` (`e_id`)
+    ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
+
+CREATE TABLE
     Private_Event (
         e_id CHAR(36) NOT NULL,
         associated_uni CHAR(36),
