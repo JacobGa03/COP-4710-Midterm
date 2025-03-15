@@ -38,7 +38,10 @@
           novalidate
         >
           <div class="mb-3">
-            <div class="mt-3 mb-3">
+            <div
+              id="emailInput"
+              class="mt-3 mb-3"
+            >
               <label
                 for="enterEmail"
                 class="form-label"
@@ -86,6 +89,21 @@
             </div>
             <div class="mt-3 mb-3">
               <label
+                for="enterName"
+                class="form-label"
+                >Your Name</label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="enterName"
+                placeholder="John Doe"
+                required
+              />
+              <div class="invalid-feedback">Please enter your name</div>
+            </div>
+            <div class="mt-3 mb-3">
+              <label
                 for="enterSchool"
                 class="form-label"
                 >Your School</label
@@ -107,6 +125,7 @@
                 type="radio"
                 name="flexRadioDefault"
                 id="studentRadio"
+                value="student"
                 checked
               />
               <label
@@ -121,6 +140,7 @@
                 class="form-check-input"
                 type="radio"
                 name="flexRadioDefault"
+                value="super admin"
                 id="adminRadio"
               />
               <label

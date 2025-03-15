@@ -12,26 +12,26 @@ async function testPHP() {
 async function callAPI(endpoint, requestData, method) {
   let url = BASE_URL + BACKEND + endpoint
 
-  // Format the JSON request
-  const response = await formatResponse(url, method, requestData)
-  // Call the api
-  const result = await response.json()
+  try {
+    // Format the JSON request
+    const response = await formatResponse(url, method, requestData)
+    // Call the api
+    const result = await response.json()
 
-  // Determine if response was successful
-  // Decode more of the responses
-  switch (response.status) {
-    case 200:
-      console.log("Successful request...")
-      return [response.status, result]
-    case 404:
-      console.log("Error result not found...")
-      return [response.status, {}]
-    case 500:
-      console.log("Internal server error...")
-      return [response.status, {}]
-    default:
-      console.log("Unexpected Error...")
-      return [response.status, {}]
+    // Determine if response was successful
+    // Decode more of the responses
+    switch (response.status) {
+      case 200:
+        return [response.status, result]
+      case 404:
+        return [response.status, {}]
+      case 500:
+        return [response.status, {}]
+      default:
+        return [response.status, {}]
+    }
+  } catch (e) {
+    console.log(e)
   }
 }
 
@@ -90,8 +90,18 @@ function getUser() {
   }
   return user
 }
+// Get the user type of the current user. Distinction is important
+// since the different type of users have different things they can do.
+function getUserType() {
+  user = getUser()
+  return user && user.hasOwnProperty("stu_id") ? "student" : "super admin"
+}
 // Delete user's cookie and send them to the home page
 async function logout() {
   document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
   window.location.replace("landing.html")
+}
+// Get the university name for a given University ID
+async function getUniversityName(uni_id) {
+  return await callAPI("/getUniversityName.php", { u_id: uni_id }, "POST")
 }

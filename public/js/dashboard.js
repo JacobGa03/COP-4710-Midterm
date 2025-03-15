@@ -2,109 +2,123 @@ $(document).ready(function () {
   // Load the modal structure
   $("#modal-placeholder").load("components/event_modal.html")
   $("#create-event-modal-placeholder").load(
-    "components/create_event_modal.html"
+    "components/create_event_modal.html",
+    function () {
+      // Ensure that dates can only be chosen for today or after
+      $("#eventDate").attr("min", new Date().toISOString().split("T")[0])
+      // Create an event
+      $("#createEventButton").on("click", function (e) {
+        e.preventDefault()
+        const name = $("#eventName").val()
+        const contactInfo = $("#eventContactInfo").val()
+        const category = $("#eventCategory").val()
+        const visibility = $("#eventVisibility").val()
+        const date = $("#eventDate").val()
+        const time = $("#eventTime").val()
+        const location = $("#eventLocation").val()
+        const description = $("#eventDescription").val()
+        // Send a datetime ISO String which represents the date and time as one string
+        const datetime = new Date(`${date}T${time}:00`).toISOString()
+
+        console.log(`${datetime}`)
+
+        createEvent(
+          name,
+          contactInfo,
+          category,
+          visibility,
+          datetime.replace("T", " "),
+          location,
+          description
+        )
+      })
+    }
   )
 
-  // Load events
-  for (let i = 0; i < 10; i++) {
-    // TODO: Call API to grab a list of events
-    // Add a container w/ id = uuid of the event.
-    // This will make loading info about an event easier.
-    $("#eventContainer").append(`<div class="eventCard" id="event-${i}"></div>`)
+  loadEventCards("")
+})
 
-    // Grab the most recently added event card and inject the 'event_card.html' into it.
-    // Use the callback to insert anything else into the card that we want to modify
-    $(".eventCard")
-      .last()
-      .load("components/event_card.html", function () {
-        // Load the modal content for the event card when the link is clicked
-        $(this)
-          .find(".card-body a")
-          .on("click", function () {
-            const eventId = $(this).closest(".eventCard").attr("id")
-            loadEventModal(eventId)
+function loadEventCards(query) {
+  $("#eventContainer").empty()
+  getEvents(query).then(([code, result]) => {
+    if (result["Results"] === undefined) {
+      $("#eventContainer").append(
+        '<p style="display: flex; justify-content: center; align-items: center; height: 100%;">No Events. Go out and Create Some!</p>'
+      )
+    } else {
+      result["Results"].forEach((event) => {
+        // Add a container w/ id = uuid of the event.
+        // This will make loading info about an event easier.
+        $("#eventContainer").append(
+          `<div class="eventCard" id="event-${event.e_id}"></div>`
+        )
+
+        // Grab the most recently added event card and inject the 'event_card.html' into it.
+        // Use the callback to insert anything else into the card that we want to modify
+        $(".eventCard")
+          .last()
+          .load("components/event_card.html", function () {
+            // This callback function runs after the content is loaded
+            $(this).find("h5").text(event.name)
+            $(this).find("h6").text(event.category)
+            // Load the modal content for the event card when the link is clicked
+            $(this)
+              .find(".card-body a")
+              .on("click", function () {
+                loadEventModal(event)
+              })
           })
       })
-  }
-
-  // Load the create event modal to give users the ability to create an event
-  $(document).on("submit", "#addEventForm", function (e) {
-    e.preventDefault()
-    const eventName = $("#eventName").val()
-    const eventVisibility = $("#eventVisibility option:selected").val()
-    const eventDate = $("#eventDate").val()
-    const eventLocation = $("#eventLocation").val()
-    const eventDescription = $("#eventDescription").val()
-
-    // Add your logic to save the event here
-    console.log("Event added:", {
-      eventName,
-      eventVisibility,
-      eventDate,
-      eventLocation,
-      eventDescription,
-    })
-
-    // Close the modal
-    $("#addEventModal").modal("hide")
-
-    // Optionally, refresh the event list or add the new event to the DOM
-    // For example, you can call a function to reload the events
-    // loadEvents()
+    }
   })
-})
+}
 
 async function getEvents(searchQuery = "") {
   // Need the uuid of the user to make queries
-  user = getUser()
+  const user = getUser()
   return await callAPI(
-    "/getEvents.php",
+    "/findEvent.php",
     {
       userId: user.stuId,
-      query: searchQuery,
+      name: searchQuery,
     },
     "POST"
   )
 }
 
-function loadEventModal(eventId) {
-  // Fetch the event information based on the rsoId
-  const eventInfo = getEventInfo(eventId) // Replace with actual function to fetch RSO info
-
+function loadEventModal(event) {
   // Populate the modal with the event information
-  $("#event-modal .modal-title").text(eventInfo.name)
+  $("#event-modal .modal-title").text(event.name)
   $("#event-modal .modal-body").html(`
-    <p>Type: ${eventInfo.type}</p>
-    <p>Description: ${eventInfo.description}</p>
+    <p>Type: ${event.category}</p>
+    <p>Description: ${event.description}</p>
   `)
 
   // Show the modal
   $("#event-modal").modal("show")
 }
 
-function getEventInfo(eventId) {
-  // Generate random event information based on the eventId
-  const eventNames = ["Conference", "Workshop", "Seminar", "Meetup", "Webinar"]
-  const eventTypes = [
-    "Business",
-    "Education",
-    "Technology",
-    "Health",
-    "Networking",
-  ]
-  const eventDescriptions = [
-    "An insightful event about the latest trends.",
-    "A hands-on workshop to enhance your skills.",
-    "A seminar to discuss important topics.",
-    "A meetup to network with like-minded individuals.",
-    "An online webinar to learn from experts.",
-  ]
-
-  const index = parseInt(eventId.split("-")[1]) % eventNames.length
-
-  return {
-    name: eventNames[index],
-    type: eventTypes[index],
-    description: eventDescriptions[index],
-  }
+async function createEvent(
+  name,
+  contactInfo,
+  category,
+  visibility,
+  date,
+  location,
+  description
+) {
+  await callAPI(
+    "/createEvent.php",
+    {
+      u_id: getUser().u_id,
+      name: name,
+      contact_info: contactInfo,
+      category: category,
+      visibility: visibility,
+      time: date,
+      location: location,
+      description: description,
+    },
+    "POST"
+  )
 }
