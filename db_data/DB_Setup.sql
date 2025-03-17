@@ -55,7 +55,8 @@ CREATE TABLE
         l_id CHAR(36) NOT NULL,
         location POINT,
         address VARCHAR(50),
-        PRIMARY KEY (l_id)
+        PRIMARY KEY (l_id),
+        KEY (location, address)
     );
 
 CREATE TABLE
@@ -65,6 +66,7 @@ CREATE TABLE
         name VARCHAR(50),
         description VARCHAR(150),
         time DATETIME,
+        duration TIME, 
         category VARCHAR(50),
         location CHAR(36),
         PRIMARY KEY (e_id)
