@@ -24,9 +24,38 @@ $(document).ready(function () {
       console.error("Error fetching university name:", error)
     })
 
+  // Fil in the different RSO information
+  if (getUserType() == "student") {
+    $("#RSOSection").append("<h1>Your RSOs</h1>")
+    // Display a list view of the RSOs the user is a admin/member of
+    loadRSOView()
+  }
+
   // Enable the button to sign the user out and direct them back to the home page
   $("#signOut").click(function (e) {
     e.preventDefault()
     logout()
   })
 })
+
+async function loadRSOView() {
+  // Grab the list of RSO id's the user is a admin of
+  Object.values(
+    getUser()
+      .rso_admin.replace(/[\[\] ]/g, "")
+      .split(",")
+      .filter(Boolean)
+  ).forEach((rso_id) => {
+    $("#displayRSOAdmins").append("")
+  })
+
+  // Grab the list of the RSOs which the user is a member of
+  Object.values(
+    getUser()
+      .rso_member.replace(/[\[\] ]/g, "")
+      .split(",")
+      .filter(Boolean)
+  ).forEach((rso_id) => {
+    $("#displayRSOMember").append("")
+  })
+}

@@ -97,7 +97,7 @@ CREATE TABLE
         admin_id CHAR(36) NOT NULL,
         name VARCHAR(30),
         associated_university CHAR(36),
-        status VARCHAR(10),
+        status ENUM ('inactive', 'active') DEFAULT 'inactive',
         PRIMARY KEY (rso_id),
         FOREIGN KEY (admin_id) REFERENCES Students (stu_id),
         FOREIGN KEY (associated_university) REFERENCES University (u_id)
@@ -166,3 +166,19 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+-- Default insert statements
+
+INSERT INTO University (u_id, name) VALUES
+('349dab72-0374-11f0-86aa-0242ac140002', 'University of Central Florida');
+
+INSERT INTO Students (stu_id, password, email, university, name) VALUES
+('1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student1@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Alice Smith'),
+('2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student2@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Bob Johnson'),
+('3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student3@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Charlie Brown'),
+('4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student4@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Diana Prince'),
+('5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student5@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Ethan Hunt'),
+('6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student6@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Fiona Gallagher');
+
+INSERT INTO RSO (rso_id, admin_id, name, associated_university) VALUES
+('9a041f13-0381-11f0-b6af-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'UCF Jazz Appreciators', '349dab72-0374-11f0-86aa-0242ac140002');

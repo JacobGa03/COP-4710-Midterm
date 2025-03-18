@@ -22,8 +22,9 @@ if ($conn->connect_error) {
 
     // User is a student
     if ($row = $result->fetch_assoc()) {
-        // TODO: Grab a list of the RSO's the user is in (RSOMember) & a list of RSOs the user is an Admin of
-        returnJson(['stu_id' => $row['stu_id'], 'u_id' => $row['university'], 'email' => $row['email'], 'name' => $row['name']]);
+        $rso_member = getRSOMembership($conn, $row['stu_id']);
+        $rso_admin =  getRSOAdmin($conn, $row['stu_id']);
+        returnJson(['stu_id' => $row['stu_id'], 'u_id' => $row['university'], 'email' => $row['email'], 'name' => $row['name'], 'rso_member' => $rso_member, 'rso_admin' => $rso_admin]);
     }
     // User is a super admin
     else {
@@ -39,4 +40,54 @@ if ($conn->connect_error) {
     }
     $stmt->close();
     $conn->close();
+}
+
+// Get the RSO's of which the user is a member of 
+function getRSOMembership($conn, $stu_id)
+{
+    $stmt = $conn->prepare("SELECT rso_id FROM RSO_Member WHERE stu_id = ?");
+    $stmt->bind_param("s", $stu_id);
+    $stmt->execute();
+
+    $res = "";
+
+    // Loop through the results
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $res .= "[";
+        // Grab each row from the search result
+        while ($row = $result->fetch_assoc()) {
+            $res .= $row["rso_id"] . ", ";
+        }
+        $res .= "]";
+    }
+    // The user isn't apart of any RSOs 
+    else {
+        $res = "[]";
+    }
+
+    return $res;
+}
+
+// Get all of the RSO's which the user is an admin of
+function getRSOAdmin($conn, $stu_id)
+{
+    $stmt = $conn->prepare("SELECT rso_id FROM RSO WHERE admin_id = ?");
+    $stmt->bind_param("s", $stu_id);
+    $stmt->execute();
+
+    $res = "";
+
+    $result = $stmt->get_result();
+    if ($result->num_rows > 0) {
+        $res .= "[";
+        while ($row = $result->fetch_assoc()) {
+            $res .= $row["rso_id"] . ", ";
+        }
+        $res .= "]";
+    } else {
+        $res = "[]";
+    }
+
+    return $res;
 }
