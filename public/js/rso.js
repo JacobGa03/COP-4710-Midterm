@@ -7,9 +7,27 @@ $(document).ready(function () {
       $("#createRSOButton").on("click", function (e) {
         e.preventDefault()
         rsoName = $("#RSOName").val()
-        // TODO: Add more fields here
 
-        createRSO(rsoName)
+        // Create the RSO
+        createRSO(rsoName).then(([code, result]) => {
+          if (code == 200) {
+            // Copy over the newly joined RSO
+            user = getUser()
+            newArr = []
+            getUser().rso_admin.forEach((rso_id) => {
+              newArr.push(rso_id)
+            })
+            newArr.push(result["rso_id"])
+            user.rso_admin = newArr
+            saveUserCookie(user)
+
+            $("#addRSOModal").toggle()
+            // Reload to display the events
+            loadRSOCards("")
+          } else {
+            console.log("Error creating RSO...")
+          }
+        })
       })
     }
   )
@@ -74,16 +92,45 @@ function loadRSOModal(rso) {
     <p>Description: ${rso.description}</p>
   `)
 
+  $(".btn-success").click(function (e) {
+    e.preventDefault()
+    console.log("Joining RSO...")
+    joinRSO(getUser().stu_id, rso.rso_id).then(([code, result]) => {
+      if (code == 200) {
+        // Copy over the newly joined RSO
+        user = getUser()
+        newArr = []
+        getUser().rso_member.forEach((rso_id) => {
+          newArr.push(rso_id)
+        })
+        newArr.push(result["rso_id"])
+        user.rso_member = newArr
+        saveUserCookie(user)
+
+        $("#event-modal").toggle()
+      } else {
+        console.log("Error joining RSO...")
+      }
+    })
+  })
+
   // Show the modal
   $("#event-modal").modal("show")
 }
 
-// TODO: University will need to be changed to university id
 async function createRSO(name) {
   user = getUser()
-  await callAPI(
+  return await callAPI(
     "/createRSO.php",
-    { name: name, admin_id: user.stuId, university: user.university },
+    { name: name, admin_id: user.stu_id, university: user.u_id },
+    "POST"
+  )
+}
+
+async function joinRSO(stu_id, rso_id) {
+  return await callAPI(
+    "/joinRSO.php",
+    { stu_id: stu_id, rso_id: rso_id },
     "POST"
   )
 }

@@ -49,24 +49,18 @@ function getRSOMembership($conn, $stu_id)
     $stmt->bind_param("s", $stu_id);
     $stmt->execute();
 
-    $res = "";
+    $rso_ids = [];
 
     // Loop through the results
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
-        $res .= "[";
         // Grab each row from the search result
         while ($row = $result->fetch_assoc()) {
-            $res .= $row["rso_id"] . ", ";
+            $rso_ids[] = $row["rso_id"];
         }
-        $res .= "]";
     }
-    // The user isn't apart of any RSOs 
-    else {
-        $res = "[]";
-    }
-
-    return $res;
+    // Implode ensures that all ids are in a single list separated by commas
+    return $rso_ids;
 }
 
 // Get all of the RSO's which the user is an admin of
@@ -76,18 +70,13 @@ function getRSOAdmin($conn, $stu_id)
     $stmt->bind_param("s", $stu_id);
     $stmt->execute();
 
-    $res = "";
+    $rso_ids = [];
 
     $result = $stmt->get_result();
     if ($result->num_rows > 0) {
-        $res .= "[";
         while ($row = $result->fetch_assoc()) {
-            $res .= $row["rso_id"] . ", ";
+            $rso_ids[] = $row["rso_id"];
         }
-        $res .= "]";
-    } else {
-        $res = "[]";
     }
-
-    return $res;
+    return $rso_ids;
 }

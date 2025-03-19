@@ -22,9 +22,10 @@ else {
     $row = $result->fetch_assoc();
     $rso_id = $row['rso_id'];
 
-    $stmt = $conn->prepare("INSERT INTO RSO_Member(rso_id, stu_id) VALUES(?,?)");
-    $stmt->bind_param("ss", $rso_id, $admin_id);
-    $stmt->execute();
-    $stmt->close();
+    // TODO: Lets assume RSO admin isn't in this 'RSO_Member' table
+    // $stmt = $conn->prepare("INSERT INTO RSO_Member(rso_id, stu_id) VALUES(?,?)");
+    // $stmt->bind_param("ss", $rso_id, $admin_id);
+    // $stmt->execute();
+    // $stmt->close();
     returnJson(['rso_id' => $rso_id, 'admin_id' => $admin_id, 'name' => $name, 'university' => $university]);
 }

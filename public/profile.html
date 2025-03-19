@@ -78,14 +78,39 @@
         </div>
       </div>
     </div>
-    <!-- Display user specific information -->
     <!-- Students have this -->
     <div id="RSOSection">
-      <div id="displayRSOAdmins"></div>
-      <div id="displayRSOMember"></div>
+      <h1>Your RSOs</h1>
+      <!-- RSO admins-->
+      <div id="displayRSOAdmins">
+        <div class="container-fluid py-2">
+          <h2 class="font-weight-light"></h2>
+          <div
+            id="RSOAdminCards"
+            class="d-flex flex-row flex-nowrap overflow-auto"
+          >
+            <!-- Insert cards here -->
+          </div>
+        </div>
+      </div>
+      <!-- RSO Member -->
+      <div id="displayRSOMember">
+        <div class="container-fluid py-2">
+          <h2 class="font-weight-light"></h2>
+          <div
+            id="RSOMemberCards"
+            class="d-flex flex-row flex-nowrap overflow-auto"
+          >
+            <!-- Insert cards here -->
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- TODO: Something here for Super admins -->
+    <!-- Super admins have this-->
+    <div id="superAdminSection">
+      <h1>You Manage</h1>
+    </div>
 
     <!-- Sign out of the application -->
     <button
