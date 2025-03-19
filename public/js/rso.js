@@ -14,7 +14,7 @@ $(document).ready(function () {
             // Copy over the newly joined RSO
             user = getUser()
             newArr = []
-            getUser().rso_admin.forEach((rso_id) => {
+            user.rso_admin.forEach((rso_id) => {
               newArr.push(rso_id)
             })
             newArr.push(result["rso_id"])
@@ -42,7 +42,7 @@ async function getRSO(searchQuery = "") {
   return await callAPI(
     "/findRSO.php",
     {
-      userId: user.stuId,
+      university: user.u_id,
       search: searchQuery,
     },
     "POST"
@@ -100,7 +100,7 @@ function loadRSOModal(rso) {
         // Copy over the newly joined RSO
         user = getUser()
         newArr = []
-        getUser().rso_member.forEach((rso_id) => {
+        user.rso_member.forEach((rso_id) => {
           newArr.push(rso_id)
         })
         newArr.push(result["rso_id"])

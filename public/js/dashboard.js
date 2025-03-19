@@ -79,7 +79,7 @@ async function getEvents(searchQuery = "") {
   return await callAPI(
     "/findEvent.php",
     {
-      userId: user.stuId,
+      university: user.u_id,
       name: searchQuery,
     },
     "POST"

@@ -82,6 +82,28 @@
             />
           </div>
           <div class="form-group">
+            <label for="eventDurationHours">Event Duration</label>
+            <div class="d-flex">
+              <input
+                type="number"
+                class="form-control mr-2"
+                id="eventDurationHours"
+                placeholder="Hours"
+                min="0"
+                required
+              />
+              <input
+                type="number"
+                class="form-control"
+                id="eventDurationMinutes"
+                placeholder="Minutes"
+                min="0"
+                max="59"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group">
             <label for="eventLocation">Event Location</label>
             <input
               type="text"

@@ -32,7 +32,7 @@ if ($conn->connect_error) {
             $newResult = $newStmt->get_result();
             $newRow = $newResult->fetch_assoc();
 
-            returnJson(['stu_id' => $newRow['stu_id'], 'email' => $email, 'u_id' => $uni_id, 'name' => $name]);
+            returnJson(['stu_id' => $newRow['stu_id'], 'email' => $email, 'u_id' => $uni_id, 'name' => $name, 'rso_member' => [], 'rso_admin' => []]);
         } else {
             if ($conn->errno == 1062) { // 1062 is the error code for duplicate entry
                 returnError(CODE_CONFLICT, 'User already exists');
