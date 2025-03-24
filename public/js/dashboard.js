@@ -1,4 +1,15 @@
 $(document).ready(function () {
+  // Create and load the script for Google Maps
+  const script = document.createElement("script")
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&libraries=places`
+  script.async = true
+  script.defer = true
+  script.onload = function () {
+    // Ensure the map is initialized only after the script has loaded
+    initMap()
+  }
+  document.head.appendChild(script)
+
   // Load the modal structure
   $("#modal-placeholder").load("components/event_modal.html")
   $("#create-event-modal-placeholder").load(
@@ -19,8 +30,10 @@ $(document).ready(function () {
         const description = $("#eventDescription").val()
         // Send a datetime ISO String which represents the date and time as one string
         const datetime = new Date(`${date}T${time}:00`).toISOString()
-
-        console.log(`${datetime}`)
+        // TODO: Convert the duration to a TIME object which can be recognized by MySQL
+        const hours = $("#eventDurationHours").val()
+        const minuets = $("#eventDurationMinutes").val()
+        //let duration = hours.toString().padStart(2, '0') + ":" + minuets.toString().padStart(2, '0') + ":" + "00"
 
         createEvent(
           name,
@@ -36,6 +49,7 @@ $(document).ready(function () {
   )
 
   loadEventCards("")
+  document.addEventListener("DOMContentLoaded", initMap)
 })
 
 function loadEventCards(query) {
@@ -121,4 +135,60 @@ async function createEvent(
     },
     "POST"
   )
+}
+// Initialize Google Maps integrations
+function initMap() {
+  let map
+  let marker
+  let autocomplete
+  // Set a default location for the map to pin point on
+  const defaultLocation = { lat: 28.5383, lng: -81.3792 }
+
+  // Define a map object
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: defaultLocation,
+    zoom: 13,
+  })
+
+  marker = new google.maps.Marker({
+    position: defaultLocation,
+    map: map,
+    draggable: true,
+  })
+
+  // Change the location when the user is done dragging
+  google.maps.event.addListener(marker, "dragend", function () {
+    const position = marker.getPosition()
+    document.getElementById("eventLatitude").value = position.lat()
+    document.getElementById("eventLongitude").value = position.lng()
+  })
+
+  const input = document.getElementById("eventLocation")
+  autocomplete = new google.maps.places.AutocompleteService()
+
+  // Bias the input to be relative to the users relative location
+  // TODO fix this
+  autocomplete.bindTo("AutocompleteService.getPlacePrediction", map)
+
+  autocomplete.addListener("place_changed", function () {
+    const place = autocomplete.getPlace()
+
+    if (!place.geometry || !place.geometry.location) {
+      console.log("No details for this location")
+      return
+    }
+
+    map.setCenter(place.geometry.load)
+    map.setZoom(15)
+    marker.setPosition(place.geometry.location)
+
+    // Update hidden inputs to store the desired location
+    document.getElementById("eventLatitude").value =
+      place.geometry.location.lat()
+    document.getElementById("eventLongitude").value =
+      place.geometry.location.lng()
+    console.log(
+      `Event location changed! ${place.geometry.location.lat()} and ${place.geometry.location.lng()}`
+    )
+  })
 }

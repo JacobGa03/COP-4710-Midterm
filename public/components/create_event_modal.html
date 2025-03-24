@@ -97,13 +97,13 @@
                 class="form-control"
                 id="eventDurationMinutes"
                 placeholder="Minutes"
-                min="0"
+                min="30"
                 max="59"
                 required
               />
             </div>
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label for="eventLocation">Event Location</label>
             <input
               type="text"
@@ -111,7 +111,29 @@
               id="eventLocation"
               required
             />
+          </div> -->
+          <div class="form-group">
+            <label for="eventLocation">Event Location</label>
+            <input
+              type="text"
+              class="form-control"
+              id="eventLocation"
+              placeholder="Search for a location"
+              required
+            />
           </div>
+          <div
+            id="map"
+            style="height: 300px; width: 100%"
+          ></div>
+          <input
+            type="hidden"
+            id="eventLatitude"
+          />
+          <input
+            type="hidden"
+            id="eventLongitude"
+          />
           <div class="form-group">
             <label for="eventDescription">Event Description</label>
             <textarea
