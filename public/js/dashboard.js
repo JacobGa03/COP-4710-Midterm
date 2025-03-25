@@ -163,12 +163,22 @@ function initMap() {
     document.getElementById("eventLongitude").value = position.lng()
   })
 
+  // Enable location autocomplete search
   const input = document.getElementById("eventLocation")
-  autocomplete = new google.maps.places.AutocompleteService()
+  const autoCompleteOptions = {
+    bounds: {
+      north: defaultLocation.lat + 0.1,
+      south: defaultLocation.lat - 0.1,
+      east: defaultLocation.lng + 0.1,
+      west: defaultLocation.lng - 0.1,
+    },
+    componentRestrictions: { country: "us" },
+    fields: ["address_components", "geometry", "icon", "name"],
+    strictBounds: false,
+  }
+  autocomplete = new google.maps.places.Autocomplete(input, autoCompleteOptions)
 
-  // Bias the input to be relative to the users relative location
-  // TODO fix this
-  autocomplete.bindTo("AutocompleteService.getPlacePrediction", map)
+  autocomplete.bindTo("bounds", map)
 
   autocomplete.addListener("place_changed", function () {
     const place = autocomplete.getPlace()
@@ -178,7 +188,7 @@ function initMap() {
       return
     }
 
-    map.setCenter(place.geometry.load)
+    map.setCenter(place.geometry.location)
     map.setZoom(15)
     marker.setPosition(place.geometry.location)
 
@@ -188,7 +198,9 @@ function initMap() {
     document.getElementById("eventLongitude").value =
       place.geometry.location.lng()
     console.log(
-      `Event location changed! ${place.geometry.location.lat()} and ${place.geometry.location.lng()}`
+      `Event location changed! ${place.geometry.location.lat()} and ${place.geometry.location.lng()}\nand name is ${
+        place.name
+      } `
     )
   })
 }
