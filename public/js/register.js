@@ -79,6 +79,7 @@ $(document).ready(function () {
 
   // Handle submit
   $("#submitRegister").click(function (e) {
+    e.preventDefault()
     validateConfirmationPass()
     validatePassword()
     email.dispatchEvent(new Event("blur"))
@@ -94,7 +95,7 @@ $(document).ready(function () {
 
     // Ensure that both email and password were entered correctly
     if (passwordError && emailError && confirmationPasswordError) {
-      e.preventDefault()
+      // e.preventDefault()
       // Try to register the user
       register(emailVal, hashedPassword, university, userType, name).then(
         ([code, result]) => {
@@ -109,6 +110,7 @@ $(document).ready(function () {
           } else {
             // Save the user information into a cookie
             saveUserCookie(result)
+            console.log(`Saving the user's cookie ${result}`)
             // Redirect to dashboard
             window.location.replace("dashboard.html")
             return true

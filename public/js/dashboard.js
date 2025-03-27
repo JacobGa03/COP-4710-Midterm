@@ -41,6 +41,7 @@ $(document).ready(function () {
           category,
           visibility,
           datetime.replace("T", " "),
+          duration,
           location,
           description
         )
@@ -117,7 +118,9 @@ async function createEvent(
   contactInfo,
   category,
   visibility,
+  rso = "",
   date,
+  duration,
   location,
   description
 ) {
@@ -129,7 +132,10 @@ async function createEvent(
       contact_info: contactInfo,
       category: category,
       visibility: visibility,
+      rso: rso,
       time: date,
+      duration,
+      duration,
       location: location,
       description: description,
     },

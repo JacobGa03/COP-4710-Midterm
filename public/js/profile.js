@@ -9,9 +9,10 @@ $(document).ready(function () {
     $(`#row-${i} h3`).text(user[keys[i]])
   }
 
+  let u_id = user.u_id != null ? user.u_id : user.university
   // Get the university's name and display
   // Make an async call to the API to grab the actual name.
-  getUniversityName(user.u_id)
+  getUniversityName(u_id)
     .then(([code, result]) => {
       if (code == 200) {
         $(`#row-2 h3`).text(result.name)
