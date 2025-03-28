@@ -105,3 +105,21 @@ async function logout() {
 async function getUniversityName(uni_id) {
   return await callAPI("/getUniversityName.php", { u_id: uni_id }, "POST")
 }
+
+// * This stores time in UTC, meaning that most times will look off.
+// * One can use 'toLocaleTimeString()' to convert to your local time zone.
+function convertToDateTime(isoString) {
+  // Create a Date object from the ISO string
+  const date = new Date(isoString)
+
+  // Extract the components
+  const year = date.getUTCFullYear()
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0") // Months are 0-based
+  const day = String(date.getUTCDate()).padStart(2, "0")
+  const hours = String(date.getUTCHours()).padStart(2, "0")
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0")
+  const seconds = String(date.getUTCSeconds()).padStart(2, "0")
+
+  // Format to MySQL DATETIME format
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}

@@ -97,21 +97,12 @@
                 class="form-control"
                 id="eventDurationMinutes"
                 placeholder="Minutes"
-                min="30"
+                min="0"
                 max="59"
                 required
               />
             </div>
           </div>
-          <!-- <div class="form-group">
-            <label for="eventLocation">Event Location</label>
-            <input
-              type="text"
-              class="form-control"
-              id="eventLocation"
-              required
-            />
-          </div> -->
           <div class="form-group">
             <label for="eventLocation">Event Location</label>
             <input
@@ -133,6 +124,10 @@
           <input
             type="hidden"
             id="eventLongitude"
+          />
+          <input
+            type="hidden"
+            id="locationName"
           />
           <div class="form-group">
             <label for="eventDescription">Event Description</label>

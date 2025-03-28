@@ -26,22 +26,37 @@ $(document).ready(function () {
         const visibility = $("#eventVisibility").val()
         const date = $("#eventDate").val()
         const time = $("#eventTime").val()
-        const location = $("#eventLocation").val()
+        const location = {
+          name: $("#locationName").val(),
+          lat: $("#eventLatitude").val(),
+          lng: $("#eventLongitude").val(),
+        }
         const description = $("#eventDescription").val()
         // Send a datetime ISO String which represents the date and time as one string
         const datetime = new Date(`${date}T${time}:00`).toISOString()
-        // TODO: Convert the duration to a TIME object which can be recognized by MySQL
-        const hours = $("#eventDurationHours").val()
-        const minuets = $("#eventDurationMinutes").val()
-        //let duration = hours.toString().padStart(2, '0') + ":" + minuets.toString().padStart(2, '0') + ":" + "00"
+        // Convert the duration to a TIME object which can be recognized by MySQL
+        const hours = parseInt($("#eventDurationHours").val(), 10)
+        const minutes = parseInt($("#eventDurationMinutes").val(), 10)
+        let duration =
+          hours.toString().padStart(2, "0") +
+          ":" +
+          minutes.toString().padStart(2, "0") +
+          ":00"
+
+        // Calculate the end time
+        const startTime = new Date(datetime)
+        console.log(`Start Time: ${startTime}`)
+        const endTime = new Date(
+          startTime.getTime() + (hours * 60 + minutes) * 60000
+        )
 
         createEvent(
           name,
           contactInfo,
           category,
           visibility,
-          datetime.replace("T", " "),
-          duration,
+          convertToDateTime(startTime),
+          convertToDateTime(endTime),
           location,
           description
         )
@@ -119,8 +134,8 @@ async function createEvent(
   category,
   visibility,
   rso = "",
-  date,
-  duration,
+  startTime,
+  endTime,
   location,
   description
 ) {
@@ -133,9 +148,8 @@ async function createEvent(
       category: category,
       visibility: visibility,
       rso: rso,
-      time: date,
-      duration,
-      duration,
+      start_time: startTime,
+      end_time: endTime,
       location: location,
       description: description,
     },
@@ -203,6 +217,7 @@ function initMap() {
       place.geometry.location.lat()
     document.getElementById("eventLongitude").value =
       place.geometry.location.lng()
+    document.getElementById("locationName").value = place.name
     console.log(
       `Event location changed! ${place.geometry.location.lat()} and ${place.geometry.location.lng()}\nand name is ${
         place.name

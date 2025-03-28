@@ -52,32 +52,33 @@ CREATE TABLE
 CREATE TABLE
     At_Location (
         l_id CHAR(36) NOT NULL,
-        latitude DECIMAL(9,6) NOT NULL,
-        longitude DECIMAL(9,6) NOT NULL,
+        latitude REAL NOT NULL,
+        longitude REAL NOT NULL,
         address VARCHAR(100),
         PRIMARY KEY (l_id),
-        KEY (latitude, longitude)
-    );
+        UNIQUE KEY (latitude, longitude)
+        );
 
 CREATE TABLE
     Events (
         e_id CHAR(36) NOT NULL,
-        contact_info VARCHAR(60),
-        name VARCHAR(50),
-        description VARCHAR(250),
-        time DATETIME,
-        duration TIME, 
-        category VARCHAR(50),
-        location CHAR(36),
-        PRIMARY KEY (e_id)
+            contact_info VARCHAR(60),
+            name VARCHAR(150),
+            description VARCHAR(250),
+            start_time DATETIME,
+            end_time DATETIME, 
+            category VARCHAR(50),
+            location CHAR(36),
+            PRIMARY KEY (e_id),
+            FOREIGN KEY (location) REFERENCES At_Location (l_id)
     );
 
 CREATE TABLE
     Public_Event (
-        `e_id` char(36) NOT NULL,
+        e_id char(36) NOT NULL,
         approved_by CHAR(36),
         approval_status ENUM ('pending', 'approved', 'rejected') DEFAULT 'pending',
-        PRIMARY KEY (`e_id`),
+        PRIMARY KEY (e_id),
         FOREIGN KEY (e_id) REFERENCES Events (e_id),
         FOREIGN KEY (approved_by) REFERENCES Super_Admins (sa_id)
     );
@@ -164,6 +165,35 @@ BEGIN
         UPDATE RSO
         SET Status = 'inactive'
         WHERE rso_id = OLD.rso_id;
+    END IF;
+END$$
+
+DELIMITER ;
+
+
+DELIMITER $$
+
+CREATE TRIGGER CheckOverlappingEvents
+BEFORE INSERT ON Events
+FOR EACH ROW
+BEGIN
+    DECLARE overlap_count INT;
+
+    -- Check for overlapping events at the same location
+    SELECT COUNT(*)
+    INTO overlap_count
+    FROM Events
+    WHERE location = NEW.location
+    AND (
+        (NEW.start_time BETWEEN start_time AND end_time)
+        OR (NEW.end_time BETWEEN start_time AND end_time)
+        OR (start_time BETWEEN NEW.start_time AND NEW.end_time)
+    );
+
+    -- If overlapping events exist, throw an error
+    IF overlap_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Overlapping events are not allowed at the same location';
     END IF;
 END$$
 
