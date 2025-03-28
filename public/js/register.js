@@ -99,18 +99,26 @@ $(document).ready(function () {
       // Try to register the user
       register(emailVal, hashedPassword, university, userType, name).then(
         ([code, result]) => {
+          console.log("API response ", { code, result })
           if (code == 409) {
-            console.log("email is already taken")
+            // Indicate email is already taken
             $("#enterEmail").removeClass("is-valid").addClass("is-invalid")
             $("#emailInput .invalid-feedback").text("Email is already taken")
             $("#emailError").text("Email is already taken")
             $("#emailError").show()
+
+            // Set proper class errors
             emailError = false
             return false
+          } else if (code == 500) {
+            // Server error
+            console.log("Error: ", result)
+            alert("There was an error registering. Please try again.")
           } else {
             // Save the user information into a cookie
             saveUserCookie(result)
             console.log(`Saving the user's cookie ${result}`)
+
             // Redirect to dashboard
             window.location.replace("dashboard.html")
             return true

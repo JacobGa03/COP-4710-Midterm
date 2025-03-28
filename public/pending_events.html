@@ -36,7 +36,17 @@
   <body>
     <!-- Navbar for users once logged in -->
     <div id="navbar-placeholder"></div>
-    <h1>Pending events</h1>
+
+    <!-- Scrollable table to display the pending events that need to be green lit-->
+    <div class="container-fluid">
+      <div class="col-12 d-flex flex-column h-25">
+        <div
+          class="flex-grow-1 overflow-auto"
+          style="height: 80vh; overflow-y: auto"
+          id="pendingEventsContainer"
+        ></div>
+      </div>
+    </div>
     <script>
       $(document).ready(function () {
         // Load the navbar

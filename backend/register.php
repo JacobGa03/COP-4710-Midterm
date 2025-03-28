@@ -46,7 +46,7 @@ if ($conn->connect_error) {
     // Create a super admin 
     else {
         $stmt = $conn->prepare("INSERT INTO Super_Admins (sa_id, email, password, university, name) VALUES(UUID(),?,?,?,?)");
-        $stmt->bind_param("ssss", $email, $password, $university, $name);
+        $stmt->bind_param("ssss", $email, $password, $uni_id, $name);
         if ($stmt->execute()) {
             // Get the UUID of the new user
             $newStmt = $conn->prepare("SELECT sa_id from Super_Admins where email = ?");
