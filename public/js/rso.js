@@ -6,10 +6,14 @@ $(document).ready(function () {
     function (e) {
       $("#createRSOButton").on("click", function (e) {
         e.preventDefault()
+        // Get the different attributes of the RSO
         rsoName = $("#RSOName").val()
+        rsoType = $("#RSOType").val()
+        rsoDescription = $("#RSODescription").val()
+        // TODO: Add list of potential emails to add
 
         // Create the RSO
-        createRSO(rsoName).then(([code, result]) => {
+        createRSO(rsoName, rsoType, rsoDescription).then(([code, result]) => {
           if (code == 200) {
             // Copy over the newly joined RSO
             user = getUser()
@@ -25,7 +29,7 @@ $(document).ready(function () {
             // Reload to display the events
             loadRSOCards("")
           } else {
-            console.log("Error creating RSO...")
+            console.log("Error creating RSO...", code, " ", result)
           }
         })
       })
@@ -70,7 +74,11 @@ function loadRSOCards(query) {
           .load("components/event_card.html", function () {
             // This callback function runs after the content is loaded
             $(this).find("h5").text(rso.name)
-            $(this).find("h6").text("RSO Type")
+            $(this).find("h6").text(rso.category)
+            // Add a description
+            description =
+              rso.description != "" ? rso.description : "No Description..."
+            $(this).find("p").text(description)
 
             // Load the modal content when the link is clicked
             $(this)
@@ -85,44 +93,61 @@ function loadRSOCards(query) {
 }
 
 function loadRSOModal(rso) {
+  category = rso.category != "" ? rso.category : "Not Added"
+  description = rso.description != "" ? rso.description : "Not Added"
   // Populate the modal with the RSO information
   $("#event-modal .modal-title").text(rso.name)
   $("#event-modal .modal-body").html(`
-    <p>Type: ${rso.type}</p>
-    <p>Description: ${rso.description}</p>
+    <p>Type: ${category}</p>
+    <p>Description: ${description}</p>
   `)
 
-  $(".btn-success").click(function (e) {
-    e.preventDefault()
-    console.log("Joining RSO...")
-    joinRSO(getUser().stu_id, rso.rso_id).then(([code, result]) => {
-      if (code == 200) {
-        // Copy over the newly joined RSO
-        user = getUser()
-        newArr = []
-        user.rso_member.forEach((rso_id) => {
-          newArr.push(rso_id)
-        })
-        newArr.push(result["rso_id"])
-        user.rso_member = newArr
-        saveUserCookie(user)
+  rsoMember = [...getUser().rso_member, ...getUser().rso_admin]
 
-        $("#event-modal").toggle()
-      } else {
-        console.log("Error joining RSO...")
-      }
+  // They are already a member so they can't join
+  if (rsoMember.includes(rso.rso_id)) {
+    $(".btn-success").attr("disabled", true).text("Already a Member")
+  }
+  // Display a button for them to join
+  else {
+    $(".btn-success").click(function (e) {
+      e.preventDefault()
+      $(".btn-success").attr("disabled", false).text("Join")
+      joinRSO(getUser().stu_id, rso.rso_id).then(([code, result]) => {
+        if (code == 200) {
+          // Copy over the newly joined RSO
+          user = getUser()
+          newArr = []
+          user.rso_member.forEach((rso_id) => {
+            newArr.push(rso_id)
+          })
+          newArr.push(result["rso_id"])
+          user.rso_member = newArr
+          saveUserCookie(user)
+
+          $("#event-modal").toggle()
+        } else {
+          console.log("Error joining RSO...")
+        }
+      })
     })
-  })
+  }
 
   // Show the modal
   $("#event-modal").modal("show")
 }
 
-async function createRSO(name) {
+async function createRSO(name, category, description) {
   user = getUser()
   return await callAPI(
     "/createRSO.php",
-    { name: name, admin_id: user.stu_id, university: user.u_id },
+    {
+      name: name,
+      admin_id: user.stu_id,
+      university: user.u_id,
+      category: category,
+      description: description,
+    },
     "POST"
   )
 }

@@ -46,25 +46,25 @@ CREATE TABLE
         email VARCHAR(50) UNIQUE NOT NULL,
         university CHAR(36),
         name varchar(50) NOT NULL,
-        PRIMARY KEY (sa_id),
-        FOREIGN KEY (university) REFERENCES University (u_id)
+        PRIMARY KEY (sa_id)
     );
 
 CREATE TABLE
     At_Location (
         l_id CHAR(36) NOT NULL,
-        location POINT,
-        address VARCHAR(50),
+        latitude DECIMAL(9,6) NOT NULL,
+        longitude DECIMAL(9,6) NOT NULL,
+        address VARCHAR(100),
         PRIMARY KEY (l_id),
-        KEY (location, address)
+        KEY (latitude, longitude)
     );
 
 CREATE TABLE
     Events (
         e_id CHAR(36) NOT NULL,
-        contact_info VARCHAR(40),
+        contact_info VARCHAR(60),
         name VARCHAR(50),
-        description VARCHAR(150),
+        description VARCHAR(250),
         time DATETIME,
         duration TIME, 
         category VARCHAR(50),
@@ -98,6 +98,8 @@ CREATE TABLE
         name VARCHAR(30),
         associated_university CHAR(36),
         status ENUM ('inactive', 'active') DEFAULT 'inactive',
+        category VARCHAR(50),
+        description VARCHAR(250),
         PRIMARY KEY (rso_id),
         FOREIGN KEY (admin_id) REFERENCES Students (stu_id),
         FOREIGN KEY (associated_university) REFERENCES University (u_id)

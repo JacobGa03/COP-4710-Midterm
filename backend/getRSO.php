@@ -5,6 +5,8 @@ require "index.php";
 $data = getRequestInfo();
 
 // * Grab ALL of the RSO information for an RSO with the given rso_id
+// * Used for displaying RSO info within the Profile page, and NOT within the 
+// * RSO page.
 
 $conn = getDbConnection();
 
@@ -19,7 +21,7 @@ if ($conn->connect_error) {
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         // TODO: Add more fields here to display different stuff
-        returnJson(['admin_id' => $row['admin_id'], 'name' => $row['name']]);
+        returnJson(['admin_id' => $row['admin_id'], 'name' => $row['name'], 'category' => $row['category'], 'description' => $row['description']]);
     } else {
         returnError(CODE_NOT_FOUND, "RSO not found");
     }

@@ -19,7 +19,7 @@ if ($conn->connect_error) {
             $searchResults .= ",";
         }
         $searchCount++;
-        $searchResults .= '{"rso_id": "' . $row['rso_id'] . '", "name": "' . $row['name'] . '", "member_count": "' . $row['member_count'] . '"}';
+        $searchResults .= '{"rso_id": "' . $row['rso_id'] . '", "name": "' . $row['name'] . '", "category": "' . $row['category'] . '", "description": "' . $row['description'] . '"}';
     }
     if ($searchCount == 0) {
         returnError(CODE_NOT_FOUND, 'No RSOs found');

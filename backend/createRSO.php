@@ -5,6 +5,8 @@ $data = getRequestInfo();
 $admin_id = $data['admin_id'];
 $name = $data['name'];
 $university = $data['university'];
+$category = $data['category'];
+$description = $data['description'];
 
 $conn = getDbConnection();
 if ($conn->connect_error) {
@@ -12,8 +14,8 @@ if ($conn->connect_error) {
 }
 //add a possible check for name so they do not have multiple rsos with the same name
 else {
-    $stmt = $conn->prepare("INSERT INTO RSO(rso_id, admin_id, name, associated_university) VALUES(UUID(),?,?,?)");
-    $stmt->bind_param("sss", $admin_id, $name, $university);
+    $stmt = $conn->prepare("INSERT INTO RSO(rso_id, admin_id, name, associated_university, category, description) VALUES(UUID(),?,?,?,?,?)");
+    $stmt->bind_param("sssss", $admin_id, $name, $university, $category, $description);
     $stmt->execute();
     $stmt->close();
 
