@@ -74,7 +74,3 @@ async function loadRSOView() {
     })
   })
 }
-// Get the RSOs information
-async function getRSO(rso_id) {
-  return await callAPI("/getRSO.php", { rso_id: rso_id }, "POST")
-}

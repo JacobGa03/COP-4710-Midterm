@@ -31,6 +31,7 @@ else {
         $newStmt = $conn->prepare("SELECT rso_id, status FROM RSO WHERE rso_id = ?");
         $newStmt->bind_param("s", $rso_id);
         if ($newStmt->execute() === false) {
+            error_log('Failed to Retrieve Associated RSO: ' . $stmt->error);
             returnError(CODE_SERVER_ERROR, 'Failed to Retrieve Associated RSO' . $stmt->error);
         }
         $newestResult = $newStmt->get_result();
@@ -38,6 +39,7 @@ else {
 
         // Only active RSOs may create events
         if ($newRow['status'] == 'inactive') {
+            error_log('Only Active RSOs May Create Events' . $stmt->error);
             returnError(CODE_SERVER_ERROR, 'Only Active RSOs May Create Events' . $stmt->error);
         }
     }
@@ -49,6 +51,7 @@ else {
 
     // Execute the statement
     if ($stmt->execute() === false) {
+        error_log('Execute failed: ' . $stmt->error);
         returnError(CODE_SERVER_ERROR, 'Execute failed: ' . $stmt->error);
     }
     // Now, insert the events into either PUBLIC, PRIVATE, or RSO 
@@ -67,6 +70,7 @@ else {
             $newStmt->bind_param("s", $e_id);
             // Check for successful completion
             if ($newStmt->execute() === false) {
+                error_log('Failed to Create Public Event' . $stmt->error);
                 returnError(CODE_SERVER_ERROR, 'Failed to Create Public Event' . $stmt->error);
             }
         } else if ($visibility == 'private') {
@@ -74,6 +78,7 @@ else {
             $newStmt->bind_param("ss", $e_id, $university);
             // Check for successful completion
             if ($newStmt->execute() === false) {
+                error_log('Failed to Create Private Event' . $stmt->error);
                 returnError(CODE_SERVER_ERROR, 'Failed to Create Private Event' . $stmt->error);
             }
         } else if ($visibility == 'rso') {
@@ -81,6 +86,7 @@ else {
             $newStmt->bind_param("sss", $e_id, $rso_id, $university);
             // Check for successful completion
             if ($newStmt->execute() === false) {
+                error_log('Failed to Create RSO Event' . $stmt->error);
                 returnError(CODE_SERVER_ERROR, 'Failed to Create RSO Event' . $stmt->error);
             }
         }

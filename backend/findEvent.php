@@ -9,41 +9,77 @@ $conn = getDbConnection();
 if ($conn->connect_error) {
     returnError(CODE_SERVER_ERROR, 'Could not connect to the database');
 } else {
-    $query = "SELECT E.e_id, E.name, E.description, E.category, E.location, E.contact_info, E.time 
-              FROM Events E 
-              LEFT JOIN Private_Event PE ON E.e_id = PE.e_id 
-              LEFT JOIN RSO_Event RE ON E.e_id = RE.e_id 
-              WHERE 1=1";
+    // Query for approved public events
+    $queryPublicEvents = "
+        SELECT 
+            E.e_id, 
+            E.name, 
+            E.description, 
+            E.category, 
+            E.location, 
+            E.contact_info,
+            'public' AS visibility,
+            PUE.approval_status,
+            NULL AS rso_id
+        FROM Events E
+        LEFT JOIN Public_Event PUE ON E.e_id = PUE.e_id
+        WHERE PUE.approval_status = 'approved'
+    ";
     $params = [];
     $types = "";
 
     if (!empty($data['name'])) {
-        $query .= " AND E.name LIKE ?";
+        $queryPublicEvents .= " AND E.name LIKE ?";
         $params[] = "%" . $data['name'] . "%";
         $types .= "s";
     }
     if (!empty($data['category'])) {
-        $query .= " AND E.category = ?";
+        $queryPublicEvents .= " AND E.category = ?";
         $params[] = $data['category'];
         $types .= "s";
     }
-    if (!empty($data['location'])) {
-        $query .= " AND E.location = ?";
-        $params[] = $data['location'];
+
+    // Query for private and RSO events
+    $queryOtherEvents = "
+        SELECT 
+            E.e_id, 
+            E.name, 
+            E.description, 
+            E.category, 
+            E.location, 
+            E.contact_info,
+            CASE 
+                WHEN PE.e_id IS NOT NULL THEN 'private'
+                WHEN RE.e_id IS NOT NULL THEN 'rso'
+            END AS visibility,
+            NULL AS approval_status,
+            RE.related_RSO AS rso_id
+        FROM Events E
+        LEFT JOIN Private_Event PE ON E.e_id = PE.e_id
+        LEFT JOIN RSO_Event RE ON E.e_id = RE.e_id
+        WHERE 1=1
+    ";
+    if (!empty($data['name'])) {
+        $queryOtherEvents .= " AND E.name LIKE ?";
+        $params[] = "%" . $data['name'] . "%";
+        $types .= "s";
+    }
+    if (!empty($data['category'])) {
+        $queryOtherEvents .= " AND E.category = ?";
+        $params[] = $data['category'];
         $types .= "s";
     }
     if (!empty($data['associated_uni'])) {
-        $query .= " AND (PE.associated_uni = ? OR RE.associated_uni = ?)";
+        $queryOtherEvents .= " AND (PE.associated_uni = ? OR RE.associated_uni = ?)";
         $params[] = $data['associated_uni'];
         $params[] = $data['associated_uni'];
         $types .= "ss";
     }
-    if (!empty($data['time'])) {
-        $query .= " AND E.time = ?";
-        $params[] = $data['time'];
-        $types .= "s";
-    }
 
+    // Combine the queries using UNION
+    $query = "($queryPublicEvents) UNION ($queryOtherEvents)";
+
+    // Prepare and execute the statement
     $stmt = $conn->prepare($query);
     if ($stmt === false) {
         returnError(CODE_SERVER_ERROR, 'Prepare failed: ' . htmlspecialchars($conn->error));
@@ -55,18 +91,18 @@ if ($conn->connect_error) {
     $stmt->execute();
     $result = $stmt->get_result();
 
+    // Fetch results
+    $events = [];
     while ($row = $result->fetch_assoc()) {
-        if ($searchCount > 0) {
-            $searchResults .= ",";
-        }
-        $searchCount++;
-        $searchResults .= '{"e_id": "' . $row['e_id'] . '", "name": "' . $row['name'] . '", "description": "' . $row['description'] . '", "category": "' . $row['category'] . '", "location": "' . $row['location'] . '", "contact_info": "' . $row['contact_info'] . '", "time": "' . $row['time'] . '"}';
+        $events[] = $row;
     }
-    if ($searchCount == 0) {
+
+    if (empty($events)) {
         returnError(CODE_NOT_FOUND, 'No events found');
     } else {
-        returnJsonString($searchResults);
+        returnJson(['events' => $events]);
     }
+
     $stmt->close();
     $conn->close();
 }

@@ -31,7 +31,7 @@ async function callAPI(endpoint, requestData, method) {
         return [response.status, {}]
     }
   } catch (e) {
-    console.log(e)
+    console.log("API error: ", e)
   }
 }
 
@@ -122,4 +122,8 @@ function convertToDateTime(isoString) {
 
   // Format to MySQL DATETIME format
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+// Get the RSO information based on an RSO id
+async function getRSO(rso_id) {
+  return await callAPI("/getRSO.php", { rso_id: rso_id }, "POST")
 }

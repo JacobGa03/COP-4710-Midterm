@@ -12,11 +12,37 @@ $(document).ready(function () {
 
   // Load the modal structure
   $("#modal-placeholder").load("components/event_modal.html")
+  // Load the modal to create an event
   $("#create-event-modal-placeholder").load(
     "components/create_event_modal.html",
     function () {
       // Ensure that dates can only be chosen for today or after
       $("#eventDate").attr("min", new Date().toISOString().split("T")[0])
+      $("#showRSOs").hide()
+
+      // If the event visibility is changed to RSO, display a list of RSOs who can host the event
+      $("#eventVisibility").on("change", function () {
+        if (this.value == "rso") {
+          $("#showRSOs").show()
+
+          // Load RSO drop down and place the names
+          $("#showRSOs").load("components/rso_select.html", function () {
+            ;[...getUser().rso_admin].forEach((rso) => {
+              getRSO(rso).then(([code, result]) => {
+                if (code == 200) {
+                  $("#chooseRSO").append(
+                    `<option value="${rso}">${result["name"]}</option>`
+                  )
+                }
+              })
+            })
+          })
+        } else {
+          $("#showRSOs").hide()
+        }
+      })
+
+      // If the event type drop down is selected, then display list of RSO
       // Create an event
       $("#createEventButton").on("click", function (e) {
         e.preventDefault()
@@ -25,6 +51,7 @@ $(document).ready(function () {
         const category = $("#eventCategory").val()
         const visibility = $("#eventVisibility").val()
         const date = $("#eventDate").val()
+        const rso = $("#chooseRSO").val()
         const time = $("#eventTime").val()
         const location = {
           name: $("#locationName").val(),
@@ -32,20 +59,14 @@ $(document).ready(function () {
           lng: $("#eventLongitude").val(),
         }
         const description = $("#eventDescription").val()
+
         // Send a datetime ISO String which represents the date and time as one string
         const datetime = new Date(`${date}T${time}:00`).toISOString()
         // Convert the duration to a TIME object which can be recognized by MySQL
         const hours = parseInt($("#eventDurationHours").val(), 10)
         const minutes = parseInt($("#eventDurationMinutes").val(), 10)
-        let duration =
-          hours.toString().padStart(2, "0") +
-          ":" +
-          minutes.toString().padStart(2, "0") +
-          ":00"
-
         // Calculate the end time
         const startTime = new Date(datetime)
-        console.log(`Start Time: ${startTime}`)
         const endTime = new Date(
           startTime.getTime() + (hours * 60 + minutes) * 60000
         )
@@ -55,11 +76,19 @@ $(document).ready(function () {
           contactInfo,
           category,
           visibility,
+          rso,
           convertToDateTime(startTime),
           convertToDateTime(endTime),
           location,
           description
-        )
+        ).then(([code, result]) => {
+          if (code == 200) {
+            console.log("Event created!")
+            $("#addEventModal").modal("hide")
+          } else {
+            console.log("Error", code, " ", result.error)
+          }
+        })
       })
     }
   )
@@ -71,12 +100,14 @@ $(document).ready(function () {
 function loadEventCards(query) {
   $("#eventContainer").empty()
   getEvents(query).then(([code, result]) => {
-    if (result["Results"] === undefined) {
+    if (code == 404) {
+      console.log("Error: No events found", code)
       $("#eventContainer").append(
         '<p style="display: flex; justify-content: center; align-items: center; height: 100%;">No Events. Go out and Create Some!</p>'
       )
     } else {
-      result["Results"].forEach((event) => {
+      console.log("Found some events")
+      result["events"].forEach((event) => {
         // Add a container w/ id = uuid of the event.
         // This will make loading info about an event easier.
         $("#eventContainer").append(
@@ -91,6 +122,7 @@ function loadEventCards(query) {
             // This callback function runs after the content is loaded
             $(this).find("h5").text(event.name)
             $(this).find("h6").text(event.category)
+            $(this).find("p").text(event.description)
             // Load the modal content for the event card when the link is clicked
             $(this)
               .find(".card-body a")
@@ -103,14 +135,16 @@ function loadEventCards(query) {
   })
 }
 
-async function getEvents(searchQuery = "") {
+async function getEvents(searchQuery) {
   // Need the uuid of the user to make queries
   const user = getUser()
   return await callAPI(
     "/findEvent.php",
     {
-      university: user.u_id,
+      associated_uni: user.u_id,
       name: searchQuery,
+      // TODO: Need to add way to search on category
+      category: "",
     },
     "POST"
   )
@@ -139,7 +173,7 @@ async function createEvent(
   location,
   description
 ) {
-  await callAPI(
+  return await callAPI(
     "/createEvent.php",
     {
       u_id: getUser().u_id,
@@ -147,7 +181,7 @@ async function createEvent(
       contact_info: contactInfo,
       category: category,
       visibility: visibility,
-      rso: rso,
+      rso_id: rso,
       start_time: startTime,
       end_time: endTime,
       location: location,
