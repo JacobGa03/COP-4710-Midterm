@@ -110,9 +110,9 @@ function loadRSOModal(rso) {
   }
   // Display a button for them to join
   else {
+    $(".btn-success").attr("disabled", false).text("Join")
     $(".btn-success").click(function (e) {
       e.preventDefault()
-      $(".btn-success").attr("disabled", false).text("Join")
       joinRSO(getUser().stu_id, rso.rso_id).then(([code, result]) => {
         if (code == 200) {
           // Copy over the newly joined RSO

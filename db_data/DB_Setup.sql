@@ -225,20 +225,3 @@ INSERT INTO RSO (rso_id, admin_id, name, associated_university) VALUES
 
 INSERT INTO RSO_Member(rso_id, stu_id) VALUES
 ('9a041f13-0381-11f0-b6af-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q');
-
-INSERT INTO events (e_id, contact_info, name, description, start_time, end_time, category, location) VALUES
-('76e6f887-0c3a-11f0-bb52-0242ac140002', 'sd123422@ucf.edu', 'UCF Chess Tournament', 'Come if you love chess.', '2025-03-30 16:30:00', '2025-03-30 21:30:00', 'Game', '347dd3ec-0c3a-11f0-bb52-0242ac140002'),
-('ae07a786-0c3a-11f0-bb52-0242ac140002', 'sd123422@ucf.edu', 'UCF Chess Meeting', 'Come if you love chess and UCF.', '2025-03-30 12:30:00', '2025-03-30 14:30:00', 'Game', '347dd3ec-0c3a-11f0-bb52-0242ac140002'),
-('e11824c7-0c40-11f0-bb52-0242ac140002', 'sj123422@ucf.edu', 'FE Prep II', NULL, '2025-05-10 14:00:00', '2025-05-10 17:00:00', 'Educational', '347dd3ec-0c3a-11f0-bb52-0242ac140002'),
-('e12df60d-0c3a-11f0-bb52-0242ac140002', 'ja243039@ucf.edu', 'Foundation Exam Prep', 'FE Prep for the exam!', '2025-05-10 16:00:00', '2025-05-10 19:00:00', 'Educational', 'e12d5d22-0c3a-11f0-bb52-0242ac140002');
-
-INSERT INTO Public_Events (e_id, approved_by, approval_status) VALUES
-('347e2e76-0c3a-11f0-bb52-0242ac140002', NULL, 'approved'),
-('3c5fc7d7-0c47-11f0-bb52-0242ac140002', NULL, 'pending'),
-('e11824c7-0c40-11f0-bb52-0242ac140002', NULL, 'pending');
-
-INSERT INTO Private_Event (e_id, associated_uni) VALUES
-('76e6f887-0c3a-11f0-bb52-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
-('7eafdf2d-0c47-11f0-bb52-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
-('ae07a786-0c3a-11f0-bb52-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
-('e12df60d-0c3a-11f0-bb52-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002');
