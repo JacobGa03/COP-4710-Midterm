@@ -1,0 +1,15 @@
+#RSOAdminCards,
+#RSOMemberCards {
+  overflow-x: auto;
+  white-space: wrap;
+}
+
+#RSOAdminCards .card,
+#RSOMemberCards .card {
+  min-width: 200px;
+  margin: 0.5rem;
+}
+
+#signOutDiv {
+  text-align: center;
+}

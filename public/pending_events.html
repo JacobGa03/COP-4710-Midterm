@@ -24,77 +24,43 @@
       rel="stylesheet"
       href="css/dashboard.css"
     />
-    <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-      integrity="sha384-oBqDVmMz4fnFO9gybBogGzOg6tv6WJo4l8b4pHPF0j5pucXjFUn6K7xzZ3p3pFhn"
-      crossorigin="anonymous"
-    ></script>
-
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/index.js"></script>
-    <script src="js/rso.js"></script>
-    <title>RSO Dashboard</title>
+    <script src="js/pending_events.js"></script>
+    <title>Pending Events</title>
   </head>
-  <!-- Modal placeholder for RSO information -->
-  <div id="modal-placeholder"></div>
-  <div id="create-rso-modal-placeholder"></div>
   <body>
-    <!-- Search bar -->
+    <!-- Navbar for users once logged in -->
     <div id="navbar-placeholder"></div>
 
-    <!-- Search box -->
-    <div id="search-placeholder"></div>
-
-    <!-- Add RSO Button -->
-    <div class="d-grid">
-      <button
-        id="createRSO"
-        type="button"
-        class="btn btn-primary btn-lg btn-block"
-        data-toggle="modal"
-        data-target="#addRSOModal"
-      >
-        Create RSO
-      </button>
-    </div>
-
-    <!-- Container to hold the different joinable RSOs-->
+    <!-- Scrollable table to display the pending events that need to be green lit-->
     <div class="container-fluid">
       <div class="col-12 d-flex flex-column h-25">
         <div
           class="flex-grow-1 overflow-auto"
           style="height: 80vh; overflow-y: auto"
-          id="rsoContainer"
+          id="pendingEventsContainer"
         ></div>
       </div>
     </div>
-
-    <!-- Pagination at the bottom -->
-    <div id="pagination-placeholder"></div>
     <script>
       $(document).ready(function () {
         // Load the navbar
         $("#navbar-placeholder").load("components\\navbar.html", function () {
+          // If the user is a super admin, then they should see a page to green light pending events
+          if (getUserType() != "student") {
+            $("#rsoLink")
+              .attr("href", "pending_events.html")
+              .text("Pending Events")
+          }
           // Set the active class based on the current page
           const currentPath = window.location.pathname.split("/").pop()
           $(`.nav-link[href="${currentPath}"]`).addClass("active")
         })
-
-        // Load the search bar
-        $("#search-placeholder").load("components\\search.html", function () {
-          $("#submitSearch").click(function (e) {
-            e.preventDefault()
-            loadRSOCards($("#searchBox").val())
-          })
-        })
-        $("#pagination-placeholder").load(
-          "components\\bottom_pagination.html",
-          function () {}
-        )
       })
     </script>
   </body>

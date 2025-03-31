@@ -1,33 +1,30 @@
 <?php
-require 'index.php';
 
-//takes in a stu_id:string
+require "index.php";
+
 $data = getRequestInfo();
-$stu_id = $data['stu_id'];
+
+// * Grab ALL of the RSO information for an RSO with the given rso_id
+// * Used for displaying RSO info within the Profile page, and NOT within the 
+// * RSO page.
 
 $conn = getDbConnection();
-if($conn->connect_error){
-    returnError(CODE_SERVER_ERROR, 'Could not connect to the database');
-}
-else{
-        $stmt = $conn->prepare("SELECT * FROM RSO WHERE admin_id = ?");
-        $stmt->bind_param("s", $stu_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $rsoResults = "";
-        $rsoCount = 0;
-        while($row = $result->fetch_assoc()){
-            if($rsoCount > 0){
-                $rsoResults .= ",";
-            }
-            $rsoCount++;
-            $rsoResults .= '{"rso_id": "' . $row['rso_id'] . '", "name": "' . $row['name'] . '", "member_count": "' . $row['member_count'] . '"}';
-        }
-        if($rsoCount == 0){
-            returnError(CODE_NOT_FOUND, 'No RSOs found');
-        }
-        else{
-            returnJsonString($rsoResults);
-        }
+
+if ($conn->connect_error) {
+    returnError(CODE_SERVER_ERROR, "Could not connect to database");
+} else {
+    $stmt = $conn->prepare("SELECT * FROM RSO WHERE rso_id = ?");
+    $stmt->bind_param("s", $data['rso_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        // TODO: Add more fields here to display different stuff
+        returnJson(['admin_id' => $row['admin_id'], 'name' => $row['name'], 'category' => $row['category'], 'description' => $row['description']]);
+    } else {
+        returnError(CODE_NOT_FOUND, "RSO not found");
     }
-?>
+    $stmt->close();
+    $conn->close();
+}

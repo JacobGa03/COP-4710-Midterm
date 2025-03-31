@@ -29,6 +29,24 @@
               required
             />
           </div>
+          <div class="form-group">
+            <label for="eventContactInfo">Contact Info</label>
+            <input
+              type="text"
+              class="form-control"
+              id="eventContactInfo"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="eventCategory">Event Category</label>
+            <input
+              type="text"
+              class="form-control"
+              id="eventCategory"
+              required
+            />
+          </div>
           <!-- Select a event type ie. public, private, RSO -->
           <div class="form-group">
             <label for="eventVisibility">Event Visibility</label>
@@ -44,12 +62,15 @@
               <option value="rso">RSO (Only Students in Your RSO)</option>
             </select>
           </div>
+          <!-- Input possible RSOs to host an RSO event-->
+          <div id="showRSOs"></div>
           <div class="form-group">
             <label for="eventDate">Event Date</label>
             <input
               type="date"
               class="form-control"
               id="eventDate"
+              min=""
               required
             />
           </div>
@@ -63,14 +84,53 @@
             />
           </div>
           <div class="form-group">
+            <label for="eventDurationHours">Event Duration</label>
+            <div class="d-flex">
+              <input
+                type="number"
+                class="form-control mr-2"
+                id="eventDurationHours"
+                placeholder="Hours"
+                min="0"
+                required
+              />
+              <input
+                type="number"
+                class="form-control"
+                id="eventDurationMinutes"
+                placeholder="Minutes"
+                min="0"
+                max="59"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group">
             <label for="eventLocation">Event Location</label>
             <input
               type="text"
               class="form-control"
               id="eventLocation"
+              placeholder="Search for a location"
               required
             />
           </div>
+          <div
+            id="map"
+            style="height: 300px; width: 100%"
+          ></div>
+          <input
+            type="hidden"
+            id="eventLatitude"
+          />
+          <input
+            type="hidden"
+            id="eventLongitude"
+          />
+          <input
+            type="hidden"
+            id="locationName"
+          />
           <div class="form-group">
             <label for="eventDescription">Event Description</label>
             <textarea
@@ -89,6 +149,7 @@
               Close
             </button>
             <button
+              id="createEventButton"
               type="submit"
               class="btn btn-success"
             >

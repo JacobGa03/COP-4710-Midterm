@@ -6,27 +6,35 @@ wait_for_mysql() {
   until mysqladmin ping -h db --silent; do
     sleep 1
   done
+  echo "MySQL server is ready."
 }
 
 # Initialize the database
 initialize_db() {
   echo "Initializing database..."
-  # Drops old tables 
-  mysql -h db -u${MYSQL_USER} -p${MYSQL_PASSWORD} -e "DROP DATABASE IF EXISTS ${MYSQL_DATABASE}; CREATE DATABASE ${MYSQL_DATABASE};"
-  # Clean slate
-  mysql -h db -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} < /var/lib/mysql/DB_Data.sql
+  mysql -h db -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} < /var/lib/mysql/DB_Setup.sql
+  if [ $? -eq 0 ]; then
+    echo "Database initialized successfully."
+  else
+    echo "Failed to initialize the database."
+    exit 1
+  fi
 }
 
 # Backup the database
 backup_db() {
   echo "Backing up database..."
-  # mysqldump -h db -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} > /var/lib/mysql/DB_Data.sql
-  # docker exec cop4710midterm-db-1 /var/lib/mysql/DB_Data.sql -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} >  ./db_data/DB_Data.sql
-  docker exec cop4710termproject-db-1 mysqldump --user="${MYSQL_USER}" --password="${MYSQL_PASSWORD}" "mydatabase" --no-tablespaces > /var/lib/mysql/DB_Data.sql
+  mysqldump --user="${MYSQL_USER}" --password="${MYSQL_PASSWORD}" "${MYSQL_DATABASE}" --no-tablespaces > /var/lib/mysql/DB_Data.sql
+  if [ $? -eq 0 ]; then
+    echo "Database backed up successfully."
+  else
+    echo "Failed to back up the database."
+    exit 1
+  fi
 }
 
 # Trap the SIGTERM signal to backup the database when the container stops
-trap backup_db SIGTERM
+trap 'backup_db; exit 0' SIGTERM
 
 # Wait for MySQL server to be ready
 wait_for_mysql

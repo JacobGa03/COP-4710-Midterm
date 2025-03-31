@@ -5,6 +5,7 @@ $(document).ready(function () {
   email.addEventListener("blur", () => {
     let regex = /^([_\-\.0-9a-zA-Z]+)@([_\-\.0-9a-zA-Z]+)\.([a-zA-Z]){2,7}$/
     let s = email.value
+    $("#emailInput .invalid-feedback").text("Please enter a valid email")
 
     // Valid email
     if (regex.test(s)) {
@@ -78,6 +79,7 @@ $(document).ready(function () {
 
   // Handle submit
   $("#submitRegister").click(function (e) {
+    e.preventDefault()
     validateConfirmationPass()
     validatePassword()
     email.dispatchEvent(new Event("blur"))
@@ -88,19 +90,35 @@ $(document).ready(function () {
     password.update($("#enterPassword").val())
     let hashedPassword = password.getHash("HEX")
     let university = $("#enterSchool").val()
-    let userType = ""
+    let userType = $("input[name='flexRadioDefault']:checked").val()
+    let name = $("#enterName").val()
 
     // Ensure that both email and password were entered correctly
     if (passwordError && emailError && confirmationPasswordError) {
-      e.preventDefault()
+      // e.preventDefault()
       // Try to register the user
-      register(emailVal, hashedPassword, university, userType).then(
+      register(emailVal, hashedPassword, university, userType, name).then(
         ([code, result]) => {
-          if (code != 200) {
+          console.log("API response ", { code, result })
+          if (code == 409) {
+            // Indicate email is already taken
+            $("#enterEmail").removeClass("is-valid").addClass("is-invalid")
+            $("#emailInput .invalid-feedback").text("Email is already taken")
+            $("#emailError").text("Email is already taken")
+            $("#emailError").show()
+
+            // Set proper class errors
+            emailError = false
             return false
+          } else if (code == 500) {
+            // Server error
+            console.log("Error: ", result)
+            alert("There was an error registering. Please try again.")
           } else {
             // Save the user information into a cookie
             saveUserCookie(result)
+            console.log(`Saving the user's cookie ${result}`)
+
             // Redirect to dashboard
             window.location.replace("dashboard.html")
             return true
@@ -113,11 +131,16 @@ $(document).ready(function () {
   })
 })
 
-async function register(email, password, university, userType) {
+async function register(email, password, university, userType, name) {
   return await callAPI(
     "/register.php",
-    // TODO: Add userType to the request
-    { email: email, password: password, university: university },
+    {
+      email: email,
+      password: password,
+      university: university,
+      role: userType,
+      name: name,
+    },
     "POST"
   )
 }

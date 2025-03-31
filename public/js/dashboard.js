@@ -1,110 +1,261 @@
 $(document).ready(function () {
+  // Create and load the script for Google Maps
+  const script = document.createElement("script")
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&libraries=places`
+  script.async = true
+  script.defer = true
+  script.onload = function () {
+    // Ensure the map is initialized only after the script has loaded
+    initMap()
+  }
+  document.head.appendChild(script)
+
   // Load the modal structure
   $("#modal-placeholder").load("components/event_modal.html")
+  // Load the modal to create an event
   $("#create-event-modal-placeholder").load(
-    "components/create_event_modal.html"
+    "components/create_event_modal.html",
+    function () {
+      // Ensure that dates can only be chosen for today or after
+      $("#eventDate").attr("min", new Date().toISOString().split("T")[0])
+      $("#showRSOs").hide()
+
+      // If the event visibility is changed to RSO, display a list of RSOs who can host the event
+      $("#eventVisibility").on("change", function () {
+        if (this.value == "rso") {
+          $("#showRSOs").show()
+
+          // Load RSO drop down and place the names
+          $("#showRSOs").load("components/rso_select.html", function () {
+            ;[...getUser().rso_admin].forEach((rso) => {
+              getRSO(rso).then(([code, result]) => {
+                if (code == 200) {
+                  $("#chooseRSO").append(
+                    `<option value="${rso}">${result["name"]}</option>`
+                  )
+                }
+              })
+            })
+          })
+        } else {
+          $("#showRSOs").hide()
+        }
+      })
+
+      // If the event type drop down is selected, then display list of RSO
+      // Create an event
+      $("#createEventButton").on("click", function (e) {
+        e.preventDefault()
+        const name = $("#eventName").val()
+        const contactInfo = $("#eventContactInfo").val()
+        const category = $("#eventCategory").val()
+        const visibility = $("#eventVisibility").val()
+        const date = $("#eventDate").val()
+        const rso = $("#chooseRSO").val()
+        const time = $("#eventTime").val()
+        const location = {
+          name: $("#locationName").val(),
+          lat: $("#eventLatitude").val(),
+          lng: $("#eventLongitude").val(),
+        }
+        const description = $("#eventDescription").val()
+
+        // Send a datetime ISO String which represents the date and time as one string
+        const datetime = new Date(`${date}T${time}:00`).toISOString()
+        // Convert the duration to a TIME object which can be recognized by MySQL
+        const hours = parseInt($("#eventDurationHours").val(), 10)
+        const minutes = parseInt($("#eventDurationMinutes").val(), 10)
+        // Calculate the end time
+        const startTime = new Date(datetime)
+        const endTime = new Date(
+          startTime.getTime() + (hours * 60 + minutes) * 60000
+        )
+
+        createEvent(
+          name,
+          contactInfo,
+          category,
+          visibility,
+          rso,
+          convertToDateTime(startTime),
+          convertToDateTime(endTime),
+          location,
+          description
+        ).then(([code, result]) => {
+          if (code == 200) {
+            console.log("Event created!")
+            $("#addEventModal").modal("hide")
+          } else {
+            console.log("Error", code, " ", result.error)
+          }
+        })
+      })
+    }
   )
 
-  // Load events
-  for (let i = 0; i < 10; i++) {
-    // TODO: Call API to grab a list of events
-    // Add a container w/ id = uuid of the event.
-    // This will make loading info about an event easier.
-    $("#eventContainer").append(`<div class="eventCard" id="event-${i}"></div>`)
-
-    // Grab the most recently added event card and inject the 'event_card.html' into it.
-    // Use the callback to insert anything else into the card that we want to modify
-    $(".eventCard")
-      .last()
-      .load("components/event_card.html", function () {
-        // Load the modal content for the event card when the link is clicked
-        $(this)
-          .find(".card-body a")
-          .on("click", function () {
-            const eventId = $(this).closest(".eventCard").attr("id")
-            loadEventModal(eventId)
-          })
-      })
-  }
-
-  // Load the create event modal to give users the ability to create an event
-  $(document).on("submit", "#addEventForm", function (e) {
-    e.preventDefault()
-    const eventName = $("#eventName").val()
-    const eventVisibility = $("#eventVisibility option:selected").val()
-    const eventDate = $("#eventDate").val()
-    const eventLocation = $("#eventLocation").val()
-    const eventDescription = $("#eventDescription").val()
-
-    // Add your logic to save the event here
-    console.log("Event added:", {
-      eventName,
-      eventVisibility,
-      eventDate,
-      eventLocation,
-      eventDescription,
-    })
-
-    // Close the modal
-    $("#addEventModal").modal("hide")
-
-    // Optionally, refresh the event list or add the new event to the DOM
-    // For example, you can call a function to reload the events
-    // loadEvents()
-  })
+  loadEventCards("")
+  document.addEventListener("DOMContentLoaded", initMap)
 })
 
-async function getEvents(searchQuery = "") {
+function loadEventCards(query) {
+  $("#eventContainer").empty()
+  getEvents(query).then(([code, result]) => {
+    if (code == 404) {
+      console.log("Error: No events found", code)
+      $("#eventContainer").append(
+        '<p style="display: flex; justify-content: center; align-items: center; height: 100%;">No Events. Go out and Create Some!</p>'
+      )
+    } else {
+      console.log("Found some events")
+      result["events"].forEach((event) => {
+        // Add a container w/ id = uuid of the event.
+        // This will make loading info about an event easier.
+        $("#eventContainer").append(
+          `<div class="eventCard" id="event-${event.e_id}"></div>`
+        )
+
+        // Grab the most recently added event card and inject the 'event_card.html' into it.
+        // Use the callback to insert anything else into the card that we want to modify
+        $(".eventCard")
+          .last()
+          .load("components/event_card.html", function () {
+            // This callback function runs after the content is loaded
+            $(this).find("h5").text(event.name)
+            $(this).find("h6").text(event.category)
+            $(this).find("p").text(event.description)
+            // Load the modal content for the event card when the link is clicked
+            $(this)
+              .find(".card-body a")
+              .on("click", function () {
+                loadEventModal(event)
+              })
+          })
+      })
+    }
+  })
+}
+
+async function getEvents(searchQuery) {
   // Need the uuid of the user to make queries
-  user = getUser()
+  const user = getUser()
   return await callAPI(
-    "/getEvents.php",
+    "/findEvent.php",
     {
-      userId: user.stuId,
-      query: searchQuery,
+      associated_uni: user.u_id,
+      name: searchQuery,
+      // TODO: Need to add way to search on category
+      category: "",
     },
     "POST"
   )
 }
 
-function loadEventModal(eventId) {
-  // Fetch the event information based on the rsoId
-  const eventInfo = getEventInfo(eventId) // Replace with actual function to fetch RSO info
-
+function loadEventModal(event) {
   // Populate the modal with the event information
-  $("#event-modal .modal-title").text(eventInfo.name)
+  $("#event-modal .modal-title").text(event.name)
   $("#event-modal .modal-body").html(`
-    <p>Type: ${eventInfo.type}</p>
-    <p>Description: ${eventInfo.description}</p>
+    <p>Type: ${event.category}</p>
+    <p>Description: ${event.description}</p>
   `)
 
   // Show the modal
   $("#event-modal").modal("show")
 }
 
-function getEventInfo(eventId) {
-  // Generate random event information based on the eventId
-  const eventNames = ["Conference", "Workshop", "Seminar", "Meetup", "Webinar"]
-  const eventTypes = [
-    "Business",
-    "Education",
-    "Technology",
-    "Health",
-    "Networking",
-  ]
-  const eventDescriptions = [
-    "An insightful event about the latest trends.",
-    "A hands-on workshop to enhance your skills.",
-    "A seminar to discuss important topics.",
-    "A meetup to network with like-minded individuals.",
-    "An online webinar to learn from experts.",
-  ]
+async function createEvent(
+  name,
+  contactInfo,
+  category,
+  visibility,
+  rso = "",
+  startTime,
+  endTime,
+  location,
+  description
+) {
+  return await callAPI(
+    "/createEvent.php",
+    {
+      u_id: getUser().u_id,
+      name: name,
+      contact_info: contactInfo,
+      category: category,
+      visibility: visibility,
+      rso_id: rso,
+      start_time: startTime,
+      end_time: endTime,
+      location: location,
+      description: description,
+    },
+    "POST"
+  )
+}
+// Initialize Google Maps integrations
+function initMap() {
+  let map
+  let marker
+  let autocomplete
+  // Set a default location for the map to pin point on
+  const defaultLocation = { lat: 28.5383, lng: -81.3792 }
 
-  const index = parseInt(eventId.split("-")[1]) % eventNames.length
+  // Define a map object
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: defaultLocation,
+    zoom: 13,
+  })
 
-  return {
-    name: eventNames[index],
-    type: eventTypes[index],
-    description: eventDescriptions[index],
+  marker = new google.maps.Marker({
+    position: defaultLocation,
+    map: map,
+    draggable: true,
+  })
+
+  // Change the location when the user is done dragging
+  google.maps.event.addListener(marker, "dragend", function () {
+    const position = marker.getPosition()
+    document.getElementById("eventLatitude").value = position.lat()
+    document.getElementById("eventLongitude").value = position.lng()
+  })
+
+  // Enable location autocomplete search
+  const input = document.getElementById("eventLocation")
+  const autoCompleteOptions = {
+    bounds: {
+      north: defaultLocation.lat + 0.1,
+      south: defaultLocation.lat - 0.1,
+      east: defaultLocation.lng + 0.1,
+      west: defaultLocation.lng - 0.1,
+    },
+    componentRestrictions: { country: "us" },
+    fields: ["address_components", "geometry", "icon", "name"],
+    strictBounds: false,
   }
+  autocomplete = new google.maps.places.Autocomplete(input, autoCompleteOptions)
+
+  autocomplete.bindTo("bounds", map)
+
+  autocomplete.addListener("place_changed", function () {
+    const place = autocomplete.getPlace()
+
+    if (!place.geometry || !place.geometry.location) {
+      console.log("No details for this location")
+      return
+    }
+
+    map.setCenter(place.geometry.location)
+    map.setZoom(15)
+    marker.setPosition(place.geometry.location)
+
+    // Update hidden inputs to store the desired location
+    document.getElementById("eventLatitude").value =
+      place.geometry.location.lat()
+    document.getElementById("eventLongitude").value =
+      place.geometry.location.lng()
+    document.getElementById("locationName").value = place.name
+    console.log(
+      `Event location changed! ${place.geometry.location.lat()} and ${place.geometry.location.lng()}\nand name is ${
+        place.name
+      } `
+    )
+  })
 }

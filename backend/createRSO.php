@@ -1,34 +1,33 @@
 <?php
-    require "index.php";
-    //takes in stu_id:string, name:string, description:string, university:string
-    $data = getRequestInfo();
-    $stu_id = $data['stu_id'];
-    $name = $data['name'];
-    $description = $data['description'];
-    $university = $data['university'];
-    
+require "index.php";
 
-    $conn = getDbConnection();
-    if ($conn->connect_error) {
-        returnError(CODE_SERVER_ERROR, 'Could not connect to the database');
-    }
-    //add a possible check for name so they do not have multiple rsos with the same name
-    else{
-        $stmt = $conn->prepare("INSERT INTO RSO(rso_id, admin_id, name, associated_university,status,description) VALUES(UUID(),?,?,?,'inactive',?)");
-        $stmt->bind_param("ssss",$stu_id, $name,$university,$description);
-        $stmt->execute();
-        $stmt->close();
+$data = getRequestInfo();
+$admin_id = $data['admin_id'];
+$name = $data['name'];
+$university = $data['university'];
+$category = $data['category'];
+$description = $data['description'];
 
-        //get 
-        $result = $conn->query("SELECT rso_id FROM RSO WHERE admin_id = '$stu_id'");
-        $row = $result->fetch_assoc();
-        $rso_id = $row['rso_id'];
+$conn = getDbConnection();
+if ($conn->connect_error) {
+    returnError(CODE_SERVER_ERROR, 'Could not connect to the database');
+}
+//add a possible check for name so they do not have multiple rsos with the same name
+else {
+    $stmt = $conn->prepare("INSERT INTO RSO(rso_id, admin_id, name, associated_university, category, description) VALUES(UUID(),?,?,?,?,?)");
+    $stmt->bind_param("sssss", $admin_id, $name, $university, $category, $description);
+    $stmt->execute();
+    $stmt->close();
 
-        $stmt = $conn->prepare("INSERT INTO RSO_Member(rso_id, stu_id) VALUES(?,?)");
-        $stmt->bind_param("ss",$rso_id, $stu_id); 
-        $stmt->execute();
-        $stmt->close();
-        returnJson(['rso_id' => $rso_id, 'admin_id' => $stu_id, 'name' => $name, 'university' => $university]);
-    }
+    // Get the RSO's UUID
+    $result = $conn->query("SELECT rso_id FROM RSO WHERE admin_id = '$admin_id'");
+    $row = $result->fetch_assoc();
+    $rso_id = $row['rso_id'];
 
-?>
+    // TODO: Lets assume RSO admin isn't in this 'RSO_Member' table
+    // $stmt = $conn->prepare("INSERT INTO RSO_Member(rso_id, stu_id) VALUES(?,?)");
+    // $stmt->bind_param("ss", $rso_id, $admin_id);
+    // $stmt->execute();
+    // $stmt->close();
+    returnJson(['rso_id' => $rso_id, 'admin_id' => $admin_id, 'name' => $name, 'university' => $university]);
+}

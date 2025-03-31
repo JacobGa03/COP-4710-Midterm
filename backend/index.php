@@ -24,14 +24,9 @@ define('CODE_NOT_FOUND', 404);
 define('CODE_CONFLICT', 409);
 define('CODE_SERVER_ERROR', 500);
 
-// Create MySQL connection
-// $conn = new mysqli($servername, $username, $password, $database);
-
-// // Check connection
-// if ($conn->connect_error) {
-//     die("Connection failed: " . $conn->connect_error);
-// }
-// echo "Connected successfully";
+// Paths that we need to make 
+define('BASE_URL', 'http://localhost:8000');
+define('BACKEND', '/backend');
 
 /* Get a MySQLi connection to our database. */
 function getDbConnection() : mysqli {
