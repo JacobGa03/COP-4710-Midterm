@@ -51,16 +51,15 @@
       $(document).ready(function () {
         // Load the navbar
         $("#navbar-placeholder").load("components\\navbar.html", function () {
-          // Set the active class based on the current page
-          const currentPath = window.location.pathname.split("/").pop()
-          $(`.nav-link[href="${currentPath}"]`).addClass("active")
-
           // If the user is a super admin, then they should see a page to green light pending events
           if (getUserType() != "student") {
             $("#rsoLink")
               .attr("href", "pending_events.html")
               .text("Pending Events")
           }
+          // Set the active class based on the current page
+          const currentPath = window.location.pathname.split("/").pop()
+          $(`.nav-link[href="${currentPath}"]`).addClass("active")
         })
       })
     </script>
