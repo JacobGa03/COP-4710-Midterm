@@ -90,7 +90,7 @@ $(document).ready(function () {
         ).then(([code, result]) => {
           if (code == 200) {
             console.log("Event created!")
-            $("#addEventModal").modal("hide")
+            $("#addEventModal").toggle()
           } else {
             console.log("Error", code, " ", result.error)
           }
