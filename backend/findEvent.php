@@ -17,8 +17,11 @@ if ($conn->connect_error) {
             E.description, 
             E.category, 
             E.location, 
+            E.start_time,
+            E.end_time,
             E.contact_phone,
             E.contact_email,
+            E.room,
             'public' AS visibility,
             PUE.approval_status,
             NULL AS rso_id
@@ -48,8 +51,11 @@ if ($conn->connect_error) {
             E.description, 
             E.category, 
             E.location, 
+            E.start_time,
+            E.end_time,
             E.contact_email,
             E.contact_phone,
+            E.room,
             CASE 
                 WHEN PE.e_id IS NOT NULL THEN 'private'
                 WHEN RE.e_id IS NOT NULL THEN 'rso'
