@@ -134,7 +134,7 @@ CREATE TABLE
         e_id CHAR(36) NOT NULL,
         u_id CHAR(36) NOT NULL,
         text VARCHAR(250),
-        rating INT CHECK (rating BETWEEN 1 AND 5),
+        rating INT,
         PRIMARY KEY (c_id),
         FOREIGN KEY (e_id) REFERENCES Events (e_id),
         FOREIGN KEY (u_id) REFERENCES Students (stu_id)
@@ -154,6 +154,18 @@ BEGIN
         WHERE rso_id = NEW.rso_id;
     END IF;
 END$$
+DELIMITER $$
+
+CREATE TRIGGER ValidateRating
+BEFORE INSERT ON Comments
+FOR EACH ROW
+BEGIN
+    IF NEW.rating NOT BETWEEN 1 AND 5 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Rating must be between 1 and 5';
+    END IF;
+END$$
+
 DELIMITER ;
 
 
@@ -227,3 +239,22 @@ INSERT INTO RSO (rso_id, admin_id, name, associated_university) VALUES
 
 INSERT INTO RSO_Member(rso_id, stu_id) VALUES
 ('9a041f13-0381-11f0-b6af-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q');
+
+INSERT INTO At_Location (l_id, latitude, longitude, address) VALUES
+('99cce850-0fd4-11f0-bcfe-0242ac140002', 28.6018701, -81.1987556, 'UCF Engineering II (ENG2)'),
+('c1203ffd-0fd4-11f0-bcfe-0242ac140002', 28.6047546, -81.1987911, 'Memory Mall'),
+('e6a18e85-0fd4-11f0-bcfe-0242ac140002', 28.605286, -81.19902599999999, 'UCF Career Services and Experiential Learning (CSEL)');
+
+INSERT INTO Events (e_id, contact_phone, contact_email, name, description, start_time, end_time, category, location, room) VALUES
+('99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '9876543210', 'sm123422@ucf.edu', 'FE Prep Session', 'Come practice some FE questions before the next exam!', '2025-04-09 21:30:00', '2025-04-09 23:30:00', 'Educational', '99cce850-0fd4-11f0-bcfe-0242ac140002', '237'),
+('c12114ec-0fd4-11f0-bcfe-0242ac140002', '6549873210', 'ta123422@ucf.edu', 'UCF CAB Movie Knight', 'We will be watching "Finding Nemo"! Pizza and popcorn provided.', '2025-04-11 23:30:00', '2025-04-12 02:30:00', 'Social', 'c1203ffd-0fd4-11f0-bcfe-0242ac140002', NULL),
+('e6a20c8a-0fd4-11f0-bcfe-0242ac140002', '9786453120', 'za209320@ucf.edu', 'Resume Review', 'Come get your resume reviewed by our career professionals.', '2025-04-10 18:00:00', '2025-04-10 19:30:00', 'Professional', 'e6a18e85-0fd4-11f0-bcfe-0242ac140002', NULL);
+
+INSERT INTO Private_Event (e_id, associated_uni) VALUES
+('99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
+('c12114ec-0fd4-11f0-bcfe-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
+('e6a20c8a-0fd4-11f0-bcfe-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002');
+
+INSERT INTO Comments (c_id, e_id, u_id, text, rating) VALUES
+('49fd872f-0fd6-11f0-a183-0242ac140002', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', "I\'m sooo ready. We will all pass on our first attempt", 5),
+('c1821fb6-0fd8-11f0-a183-0242ac140002', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'I\'m prepared! Let\'s goooo!', 5);

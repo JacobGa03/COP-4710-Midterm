@@ -91,6 +91,9 @@ $(document).ready(function () {
           if (code == 200) {
             console.log("Event created!")
             $("#addEventModal").toggle()
+            loadEventCards("")
+            // Clear the form of any input
+            $("#addEventForm").trigger("reset")
           } else {
             console.log("Error", code, " ", result.error)
           }
