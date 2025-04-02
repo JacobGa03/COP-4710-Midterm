@@ -62,13 +62,15 @@ CREATE TABLE
 CREATE TABLE
     Events (
         e_id CHAR(36) NOT NULL,
-            contact_info VARCHAR(60),
+            contact_phone VARCHAR(60),
+            contact_email VARCHAR(60),
             name VARCHAR(150),
             description VARCHAR(250),
             start_time DATETIME,
             end_time DATETIME, 
             category VARCHAR(50),
             location CHAR(36),
+            room VARCHAR(50),
             PRIMARY KEY (e_id),
             FOREIGN KEY (location) REFERENCES At_Location (l_id)
     );
@@ -183,7 +185,7 @@ BEGIN
     SELECT COUNT(*)
     INTO overlap_count
     FROM Events
-    WHERE location = NEW.location
+    WHERE location = NEW.location AND room = NEW.room
     AND (
         (NEW.start_time BETWEEN start_time AND end_time)
         OR (NEW.end_time BETWEEN start_time AND end_time)

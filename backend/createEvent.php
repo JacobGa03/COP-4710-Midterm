@@ -3,7 +3,8 @@ include 'index.php';
 //get data
 $data = getRequestInfo();
 
-$contact = $data['contact_info'];
+$contactPhone = $data['contact_phone'];
+$contactEmail = $data['contact_email'];
 $name = $data['name'];
 $description = $data['description'];
 $category = $data['category'];
@@ -14,6 +15,7 @@ $start = $data['start_time'];
 $end = $data['end_time'];
 // * If the user is entering an RSO event, then this will be present.
 $rso_id = $data['rso_id'];
+$room = $data['room'];
 
 // Get connection to the database
 $conn = getDbConnection();
@@ -46,8 +48,8 @@ else {
 
 
     // Bind our parameters and insert the event into the base 'Event' class
-    $stmt = $conn->prepare("INSERT INTO Events (e_id,  contact_info, name, description, start_time, end_time, category, location) VALUES(UUID(),?,?,?,?,?,?,?)");
-    $stmt->bind_param("sssssss", $contact, $name, $description, $start, $end, $category, $loc_id);
+    $stmt = $conn->prepare("INSERT INTO Events (e_id,  contact_phone, contact_email, name, description, start_time, end_time, category, location, room) VALUES(UUID(),?,?,?,?,?,?,?,?,?)");
+    $stmt->bind_param("sssssssss", $contactPhone, $contactEmail, $name, $description, $start, $end, $category, $loc_id, $room);
 
     // Execute the statement
     if ($stmt->execute() === false) {
@@ -57,8 +59,8 @@ else {
     // Now, insert the events into either PUBLIC, PRIVATE, or RSO 
     else {
         // Get the events 'e_id' so we can insert the event into the child class
-        $newStmt = $conn->prepare("SELECT e_id  FROM Events WHERE start_time = ? AND end_time = ? AND location = ?");
-        $newStmt->bind_param("sss", $start, $end, $loc_id);
+        $newStmt = $conn->prepare("SELECT e_id  FROM Events WHERE start_time = ? AND end_time = ? AND location = ? AND room = ?");
+        $newStmt->bind_param("ssss", $start, $end, $loc_id, $room);
         $newStmt->execute();
         $newResult = $newStmt->get_result();
         $newRow = $newResult->fetch_assoc();

@@ -47,7 +47,9 @@ $(document).ready(function () {
       $("#createEventButton").on("click", function (e) {
         e.preventDefault()
         const name = $("#eventName").val()
-        const contactInfo = $("#eventContactInfo").val()
+        // 2 different kinds of contact information
+        const contactPhone = $("#eventContactPhone").val()
+        const contactEmail = $("#eventContactEmail").val()
         const category = $("#eventCategory").val()
         const visibility = $("#eventVisibility").val()
         const date = $("#eventDate").val()
@@ -58,6 +60,8 @@ $(document).ready(function () {
           lat: $("#eventLatitude").val(),
           lng: $("#eventLongitude").val(),
         }
+        // What room in the building will the event take place?
+        const room = $("#eventRoom").val()
         const description = $("#eventDescription").val()
 
         // Send a datetime ISO String which represents the date and time as one string
@@ -73,18 +77,20 @@ $(document).ready(function () {
 
         createEvent(
           name,
-          contactInfo,
+          contactPhone,
+          contactEmail,
           category,
           visibility,
           rso,
           convertToDateTime(startTime),
           convertToDateTime(endTime),
           location,
+          room,
           description
         ).then(([code, result]) => {
           if (code == 200) {
             console.log("Event created!")
-            $("#addEventModal").modal("hide")
+            $("#addEventModal").toggle()
           } else {
             console.log("Error", code, " ", result.error)
           }
@@ -164,13 +170,15 @@ function loadEventModal(event) {
 
 async function createEvent(
   name,
-  contactInfo,
+  contactPhone,
+  contactEmail,
   category,
   visibility,
   rso = "",
   startTime,
   endTime,
   location,
+  room,
   description
 ) {
   return await callAPI(
@@ -178,13 +186,15 @@ async function createEvent(
     {
       u_id: getUser().u_id,
       name: name,
-      contact_info: contactInfo,
+      contact_phone: contactPhone,
+      contact_email: contactEmail,
       category: category,
       visibility: visibility,
       rso_id: rso,
       start_time: startTime,
       end_time: endTime,
       location: location,
+      room: room,
       description: description,
     },
     "POST"

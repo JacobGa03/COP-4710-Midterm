@@ -30,11 +30,20 @@
             />
           </div>
           <div class="form-group">
-            <label for="eventContactInfo">Contact Info</label>
+            <label for="eventContactPhone">Contact Phone</label>
             <input
-              type="text"
+              type="tel"
               class="form-control"
-              id="eventContactInfo"
+              id="eventContactPhone"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="eventContactEmail">Contact Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="eventContactEmail"
               required
             />
           </div>
@@ -131,6 +140,14 @@
             type="hidden"
             id="locationName"
           />
+          <div class="form-group">
+            <label for="eventRoom">Room Number</label>
+            <input
+              class="form-control"
+              id="eventRoom"
+              required
+            ></input>
+          </div>
           <div class="form-group">
             <label for="eventDescription">Event Description</label>
             <textarea
