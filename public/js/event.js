@@ -1,6 +1,15 @@
 $(document).ready(function () {
   const event = JSON.parse(localStorage.getItem("event"))
-  console.log(event)
+  // Create and load the script for Google Maps
+  const script = document.createElement("script")
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_MAPS_API_KEY}&libraries=places`
+  script.async = true
+  script.defer = true
+  script.onload = function () {
+    // Ensure the map is initialized only after the script has loaded
+    initMap(event)
+  }
+  document.head.appendChild(script)
 
   // Grab the start time
   // Adding Z here represents Eastern Time
@@ -18,7 +27,11 @@ $(document).ready(function () {
   })
 
   // Load the event information
-  $("#eventName").text(event.name)
+  $("#location").text(event.address)
+  event.room != null
+    ? $("#inRoom").text(`in room ${event.room}`)
+    : $("#inRoom").hide()
+  $("#eventName").text(`${event.name}`)
   $("#timedate").text(`${formattedDate} at ${formattedTime}`)
   $("#category").text(event.category)
   $("#contactInfo").text(`${event.contact_phone} or ${event.contact_email}`)
@@ -29,8 +42,9 @@ $(document).ready(function () {
     e.preventDefault()
     // Grab the text
     const text = $("#comment").val()
+    const rating = $('input[name="rating"]:checked').val()
 
-    createComment(event, text, 5).then(([code, result]) => {
+    createComment(event, text, rating).then(([code, result]) => {
       if (code == 200) {
         console.log("Comment created successfully")
         loadComments(event)
@@ -39,6 +53,8 @@ $(document).ready(function () {
       }
     })
   })
+
+  $("#ratingContainer").load("components/start_rating.html", function () {})
   // Load comments
   loadComments(event)
 })
@@ -49,9 +65,13 @@ function loadComments(event) {
     if (code == 200) {
       $("#commentContainer").empty()
       result["comments"].forEach((comment) => {
-        $("#commentContainer").append(`<div id="comment-${comment.c_id}></div>`)
+        $("#commentContainer").append(
+          `<div id="comment-${comment.c_id} class="mt-3"></div>`
+        )
 
-        const commentElement = $(`<div id="comment-${comment.c_id}"></div>`)
+        const commentElement = $(
+          `<div id="comment-${comment.c_id}" class="mt-3"></div>`
+        )
         commentElement.load("components/comment_tile.html", function () {
           $(this).find("h5").text(comment.user_name)
           $(this)
@@ -67,7 +87,9 @@ function loadComments(event) {
   })
 }
 // Write and store a comment
-async function createComment(event, text, rating) {
+async function createComment(event, text, rating = 3) {
+  // Only send create a comment if there is text to send
+  if (text == "") return
   const u_id = getUser().stu_id || getUser().sa_id
   return await callAPI(
     "/createComment.php",
@@ -78,4 +100,25 @@ async function createComment(event, text, rating) {
 // Get all of the comments associated with an event
 async function getComments(event) {
   return await callAPI("/getComments.php", { e_id: event.e_id }, "POST")
+}
+
+// Initialize Google Maps integrations
+function initMap(event) {
+  let map
+  let marker
+  let autocomplete
+  // Set a default location for the map to pin point on
+  const defaultLocation = { lat: event.latitude, lng: event.longitude }
+
+  // Define a map object
+  map = new google.maps.Map(document.getElementById("map"), {
+    center: defaultLocation,
+    zoom: 17,
+    draggable: false,
+  })
+
+  marker = new google.maps.Marker({
+    position: defaultLocation,
+    map: map,
+  })
 }

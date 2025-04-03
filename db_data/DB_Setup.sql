@@ -255,6 +255,13 @@ INSERT INTO Private_Event (e_id, associated_uni) VALUES
 ('c12114ec-0fd4-11f0-bcfe-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
 ('e6a20c8a-0fd4-11f0-bcfe-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002');
 
-INSERT INTO Comments (c_id, e_id, u_id, text, rating) VALUES
-('49fd872f-0fd6-11f0-a183-0242ac140002', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', "I\'m sooo ready. We will all pass on our first attempt", 5),
-('c1821fb6-0fd8-11f0-a183-0242ac140002', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'I\'m prepared! Let\'s goooo!', 5);
+INSERT INTO (c_id, e_id, u_id, text, rating) VALUES
+('1dd9a0ea-10b2-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Wow, thanks to all the TAs who help make this possible.', 3),
+('1ed18b6e-10b4-11f0-8d56-a2a285eb5b7b', 'c12114ec-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'I love "Finding Nemo!" its a great movie from my childhood.', 4),
+('24dd5a70-10b2-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Wow, thanks to all the TAs who help make this possible.', 5),
+('3b35f113-10b7-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', 'Who\'s ready?', 4),
+('49fd872f-0fd6-11f0-a183-0242ac140002', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'I\'m sooo ready. We will all pass on our first attempt', 5),
+('4e8f35c5-10b0-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Woop!', 5),
+('54b581bb-10b4-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Let\'s get coding!!', 5),
+('597e870f-10b4-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Let\'s get coding!!', 5),
+('6a462e47-10b4-11f0-8d56-a2a285eb5b7b', 'c12114ec-0fd4-11f0-bcfe-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', 'Meh movie ngl.', 2);

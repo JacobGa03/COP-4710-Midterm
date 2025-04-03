@@ -163,16 +163,8 @@ async function getEvents(searchQuery) {
 function loadEventModal(event) {
   // Save the event in local storage on the browser so we can access it on the new page
   localStorage.setItem("event", JSON.stringify(event))
+  // Swap to that page
   window.location.replace("event.html")
-  // // Populate the modal with the event information
-  // $("#event-modal .modal-title").text(event.name)
-  // $("#event-modal .modal-body").html(`
-  //   <p>Type: ${event.category}</p>
-  //   <p>Description: ${event.description}</p>
-  // `)
-
-  // // Show the modal
-  // $("#event-modal").modal("show")
 }
 
 async function createEvent(
