@@ -151,7 +151,7 @@ async function getEvents(searchQuery) {
   return await callAPI(
     "/findEvent.php",
     {
-      associated_uni: user.u_id,
+      associated_uni: user.u_id || user.university,
       name: searchQuery,
       // TODO: Need to add way to search on category
       category: "",

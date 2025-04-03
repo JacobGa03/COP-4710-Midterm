@@ -65,10 +65,6 @@ function loadComments(event) {
     if (code == 200) {
       $("#commentContainer").empty()
       result["comments"].forEach((comment) => {
-        $("#commentContainer").append(
-          `<div id="comment-${comment.c_id} class="mt-3"></div>`
-        )
-
         const commentElement = $(
           `<div id="comment-${comment.c_id}" class="mt-3"></div>`
         )
@@ -78,6 +74,25 @@ function loadComments(event) {
             .find("h6")
             .text(`${comment.user_name} Rates This ${comment.rating}/5`)
           $(this).find("p").text(comment.text)
+
+          // Edit a comment
+          $(this)
+            .find("#btn-warning")
+            .click(function (e) {
+              e.preventDefault()
+            })
+
+          // Delete a comment
+          $(this)
+            .find("#btn-danger")
+            .click(function (e) {
+              e.preventDefault()
+            })
+
+          // Only YOU can edit your own comment
+          getUser().u_id || sa_id != comment.u_id
+            ? $("#editComment").hide()
+            : null
         })
         $("#commentContainer").append(commentElement)
       })
