@@ -18,15 +18,14 @@ if ($stmt === false) {
     returnError(CODE_SERVER_ERROR, 'Prepare failed: ' . htmlspecialchars($conn->error));
 }
 
-$stmt->bind_param("ssss", $data['e_id'], $data['u_id'], $data['text'], $data['rating']);
-$stmt->execute();
+$stmt->bind_param("sssi", $data['e_id'], $data['u_id'], $data['text'], $data['rating']);
 
-if ($stmt->affected_rows > 0) {
-    returnJson(['message' => 'Comment added successfully']);
+if ($stmt->execute() === false) {
+    error_log('Failed to Create Event' . $stmt->error);
+    returnError(CODE_SERVER_ERROR, 'Failed to Create Comment: ' . $stmt->error);
 } else {
-    returnError(CODE_SERVER_ERROR, 'Failed to add comment');
+    returnJson(['e_id' => $data['e_id'], 'text' => $data['text'], 'rating' => $data['rating']]);
 }
 
 $stmt->close();
 $conn->close();
-?>

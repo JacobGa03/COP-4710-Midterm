@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Viewing Event</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <!-- <link
+      rel="stylesheet"
+      href="css/global.css"
+    /> -->
+    <script src="js/config.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/index.js"></script>
+    <script src="js/event.js"></script>
+  </head>
+  <body>
+    <!-- Header Section -->
+    <header class="bg-primary text-white text-center py-4">
+      <h1 id="eventName">Event Name</h1>
+      <p
+        class="mb-0"
+        id="timedate"
+      >
+        Saturday, April 5, 2025 | 5:00 PM
+      </p>
+    </header>
+
+    <!-- Event Details -->
+    <div class="container mt-4">
+      <div class="row">
+        <div class="col-md-6">
+          <h2>Event Details</h2>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <strong>Location:</strong>
+              <!-- Major location-->
+              <span id="location">Central Park, New York</span>
+              <!-- Room number if necessary-->
+              <span id="inRoom"></span>
+            </li>
+            <li class="list-group-item">
+              <strong>Category:</strong> <span id="category">Music</span>
+            </li>
+            <li class="list-group-item">
+              <strong>Contact:</strong>
+              <span id="contactInfo">info@example.com | (123) 456-7890</span>
+            </li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <h2>Description</h2>
+          <p id="eventDescription">
+            Join us for an unforgettable evening of live music at Central Park.
+            Enjoy performances by top artists and immerse yourself in the
+            vibrant atmosphere.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Display a map to show exact location on Google Maps-->
+    <div
+      id="map"
+      style="height: 300px; width: 100%"
+      class="container mt-4"
+    ></div>
+
+    <!-- Comments Section -->
+    <div class="container mt-5">
+      <h2>Comments</h2>
+      <div class="mb-3">
+        <textarea
+          class="form-control"
+          rows="2"
+          placeholder="Leave a comment..."
+          id="comment"
+        ></textarea>
+        <div id="ratingContainer"></div>
+        <div>
+          <button
+            id="createComment"
+            style="width: 100%"
+            class="btn btn-primary mt-2"
+          >
+            Let Others Know What You Think
+          </button>
+        </div>
+      </div>
+      <!-- Comment section -->
+      <div class="container-fluid">
+        <div class="col-12 d-flex flex-column h-25">
+          <div
+            class="flex-grow-1 overflow-auto"
+            style="height: 70vh; overflow-y: auto"
+            id="commentContainer"
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-3 mt-5">
+      <p class="mb-0">
+        <a
+          href="dashboard.html"
+          class="text-decoration-none"
+          >Back to Events</a
+        >
+      </p>
+    </footer>
+  </body>
+</html>

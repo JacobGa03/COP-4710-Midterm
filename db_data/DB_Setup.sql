@@ -134,7 +134,7 @@ CREATE TABLE
         e_id CHAR(36) NOT NULL,
         u_id CHAR(36) NOT NULL,
         text VARCHAR(250),
-        rating INT CHECK (rating BETWEEN 1 AND 5),
+        rating INT,
         PRIMARY KEY (c_id),
         FOREIGN KEY (e_id) REFERENCES Events (e_id),
         FOREIGN KEY (u_id) REFERENCES Students (stu_id)
@@ -154,6 +154,18 @@ BEGIN
         WHERE rso_id = NEW.rso_id;
     END IF;
 END$$
+DELIMITER $$
+
+CREATE TRIGGER ValidateRating
+BEFORE INSERT ON Comments
+FOR EACH ROW
+BEGIN
+    IF NEW.rating NOT BETWEEN 1 AND 5 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Rating must be between 1 and 5';
+    END IF;
+END$$
+
 DELIMITER ;
 
 
@@ -227,3 +239,29 @@ INSERT INTO RSO (rso_id, admin_id, name, associated_university) VALUES
 
 INSERT INTO RSO_Member(rso_id, stu_id) VALUES
 ('9a041f13-0381-11f0-b6af-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q');
+
+INSERT INTO At_Location (l_id, latitude, longitude, address) VALUES
+('99cce850-0fd4-11f0-bcfe-0242ac140002', 28.6018701, -81.1987556, 'UCF Engineering II (ENG2)'),
+('c1203ffd-0fd4-11f0-bcfe-0242ac140002', 28.6047546, -81.1987911, 'Memory Mall'),
+('e6a18e85-0fd4-11f0-bcfe-0242ac140002', 28.605286, -81.19902599999999, 'UCF Career Services and Experiential Learning (CSEL)');
+
+INSERT INTO Events (e_id, contact_phone, contact_email, name, description, start_time, end_time, category, location, room) VALUES
+('99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '9876543210', 'sm123422@ucf.edu', 'FE Prep Session', 'Come practice some FE questions before the next exam!', '2025-04-09 21:30:00', '2025-04-09 23:30:00', 'Educational', '99cce850-0fd4-11f0-bcfe-0242ac140002', '237'),
+('c12114ec-0fd4-11f0-bcfe-0242ac140002', '6549873210', 'ta123422@ucf.edu', 'UCF CAB Movie Knight', 'We will be watching "Finding Nemo"! Pizza and popcorn provided.', '2025-04-11 23:30:00', '2025-04-12 02:30:00', 'Social', 'c1203ffd-0fd4-11f0-bcfe-0242ac140002', NULL),
+('e6a20c8a-0fd4-11f0-bcfe-0242ac140002', '9786453120', 'za209320@ucf.edu', 'Resume Review', 'Come get your resume reviewed by our career professionals.', '2025-04-10 18:00:00', '2025-04-10 19:30:00', 'Professional', 'e6a18e85-0fd4-11f0-bcfe-0242ac140002', NULL);
+
+INSERT INTO Private_Event (e_id, associated_uni) VALUES
+('99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
+('c12114ec-0fd4-11f0-bcfe-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
+('e6a20c8a-0fd4-11f0-bcfe-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002');
+
+INSERT INTO Comments (c_id, e_id, u_id, text, rating) VALUES
+('1dd9a0ea-10b2-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Wow, thanks to all the TAs who help make this possible.', 3),
+('1ed18b6e-10b4-11f0-8d56-a2a285eb5b7b', 'c12114ec-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'I love "Finding Nemo!" its a great movie from my childhood.', 4),
+('24dd5a70-10b2-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Wow, thanks to all the TAs who help make this possible.', 5),
+('3b35f113-10b7-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', 'Who\'s ready?', 4),
+('49fd872f-0fd6-11f0-a183-0242ac140002', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'I\'m sooo ready. We will all pass on our first attempt', 5),
+('4e8f35c5-10b0-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Woop!', 5),
+('54b581bb-10b4-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Let\'s get coding!!', 5),
+('597e870f-10b4-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Let\'s get coding!!', 5),
+('6a462e47-10b4-11f0-8d56-a2a285eb5b7b', 'c12114ec-0fd4-11f0-bcfe-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', 'Meh movie ngl.', 2);

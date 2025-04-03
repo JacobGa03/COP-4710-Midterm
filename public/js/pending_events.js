@@ -7,16 +7,14 @@ function loadPendingEvents() {
   $("#pendingEventsContainer").empty()
   getEvents().then(([code, result]) => {
     if (code == 200) {
-      result["Results"].forEach((event) => {
-        console.log("Adding a pending event")
-        // Append a container to put the event in
-        $("#pendingEventsContainer").append(
-          `<div class="pendingEventCard" id="event-${event.e_id}"></div>`
+      result["events"].forEach((event) => {
+        const pendingEvent = $(
+          `<div id="event-${event.e_id}" class="mt-3"></div>`
         )
 
-        $("#pendingEventsContainer")
-          .last()
-          .load("components/pending_event_list_tile.html", function () {
+        pendingEvent.load(
+          "components/pending_event_list_tile.html",
+          function () {
             // Load the event name and category to the list tile
             $(this).find("h2").text(event.name)
             $(this).find("h3").text(event.category)
@@ -28,6 +26,16 @@ function loadPendingEvents() {
                 // Approve the event
                 console.log("Approving event")
                 changeEventStatus(event.e_id, "approved")
+                $(`#event-${event.e_id}`).remove()
+
+                // Display that there are no events to approve
+                if (
+                  $("#pendingEventsContainer").get(0).childElementCount === 0
+                ) {
+                  $("#pendingEventsContainer").append(
+                    '<p style="display: flex; justify-content: center; align-items: center; height: 100%;">No Events to Approve.</p>'
+                  )
+                }
               })
             $(this)
               .find(".btn-danger")
@@ -35,8 +43,21 @@ function loadPendingEvents() {
                 // Reject the event
                 console.log("Rejecting the event")
                 changeEventStatus(event.e_id, "rejected")
+                $(`#event-${event.e_id}`).remove()
+
+                // Display that there are no events to approve
+                if (
+                  $("#pendingEventsContainer").get(0).childElementCount === 0
+                ) {
+                  $("#pendingEventsContainer").append(
+                    '<p style="display: flex; justify-content: center; align-items: center; height: 100%;">No Events to Approve.</p>'
+                  )
+                }
               })
-          })
+          }
+        )
+
+        $("#pendingEventsContainer").append(pendingEvent)
       })
     }
     // No events to approve

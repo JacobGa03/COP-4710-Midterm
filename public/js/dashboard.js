@@ -91,6 +91,9 @@ $(document).ready(function () {
           if (code == 200) {
             console.log("Event created!")
             $("#addEventModal").toggle()
+            loadEventCards("")
+            // Clear the form of any input
+            $("#addEventForm").trigger("reset")
           } else {
             console.log("Error", code, " ", result.error)
           }
@@ -133,6 +136,7 @@ function loadEventCards(query) {
             $(this)
               .find(".card-body a")
               .on("click", function () {
+                // Load event page
                 loadEventModal(event)
               })
           })
@@ -147,7 +151,7 @@ async function getEvents(searchQuery) {
   return await callAPI(
     "/findEvent.php",
     {
-      associated_uni: user.u_id,
+      associated_uni: user.u_id || user.university,
       name: searchQuery,
       // TODO: Need to add way to search on category
       category: "",
@@ -157,15 +161,10 @@ async function getEvents(searchQuery) {
 }
 
 function loadEventModal(event) {
-  // Populate the modal with the event information
-  $("#event-modal .modal-title").text(event.name)
-  $("#event-modal .modal-body").html(`
-    <p>Type: ${event.category}</p>
-    <p>Description: ${event.description}</p>
-  `)
-
-  // Show the modal
-  $("#event-modal").modal("show")
+  // Save the event in local storage on the browser so we can access it on the new page
+  localStorage.setItem("event", JSON.stringify(event))
+  // Swap to that page
+  window.location.replace("event.html")
 }
 
 async function createEvent(

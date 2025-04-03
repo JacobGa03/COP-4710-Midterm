@@ -16,14 +16,20 @@ if ($conn->connect_error) {
             E.name, 
             E.description, 
             E.category, 
-            E.location, 
+            AL.latitude, 
+            AL.longitude, 
+            AL.address, 
+            E.start_time,
+            E.end_time,
             E.contact_phone,
             E.contact_email,
+            E.room,
             'public' AS visibility,
             PUE.approval_status,
             NULL AS rso_id
         FROM Events E
         LEFT JOIN Public_Event PUE ON E.e_id = PUE.e_id
+        LEFT JOIN At_Location AL ON E.location = AL.l_id
         WHERE PUE.approval_status = 'approved'
     ";
     $params = [];
@@ -47,9 +53,14 @@ if ($conn->connect_error) {
             E.name, 
             E.description, 
             E.category, 
-            E.location, 
+            AL.latitude, 
+            AL.longitude, 
+            AL.address, 
+            E.start_time,
+            E.end_time,
             E.contact_email,
             E.contact_phone,
+            E.room,
             CASE 
                 WHEN PE.e_id IS NOT NULL THEN 'private'
                 WHEN RE.e_id IS NOT NULL THEN 'rso'
@@ -59,6 +70,7 @@ if ($conn->connect_error) {
         FROM Events E
         LEFT JOIN Private_Event PE ON E.e_id = PE.e_id
         LEFT JOIN RSO_Event RE ON E.e_id = RE.e_id
+        LEFT JOIN At_Location AL ON E.location = AL.l_id
         WHERE 1=1
     ";
     if (!empty($data['name'])) {
