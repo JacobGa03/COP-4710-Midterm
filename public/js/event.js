@@ -36,6 +36,23 @@ $(document).ready(function () {
   $("#category").text(event.category)
   $("#contactInfo").text(`${event.contact_phone} or ${event.contact_email}`)
   $("#eventDescription").text(event.description || "None added...")
+  // Display special info based on event visibility
+  switch (event.visibility) {
+    case "rso":
+      $("#displayVisibility").find("strong").text(`RSO: `)
+      $("#displayVisibility").find("span").text(`${event.rso}`)
+      break
+    case "private":
+      $("#displayVisibility").find("strong").text(`Private: `)
+      $("#displayVisibility")
+        .find("span")
+        .text(`Only People at Your University can Attend`)
+      break
+    case "public":
+      $("#displayVisibility").find("strong").text(`Public: `)
+      $("#displayVisibility").find("span").text(`Anyone Can Attend`)
+      break
+  }
 
   // Enable adding comments
   $("#createComment").click(function (e) {
@@ -47,14 +64,16 @@ $(document).ready(function () {
     createComment(event, text, rating).then(([code, result]) => {
       if (code == 200) {
         console.log("Comment created successfully")
+        $("#comment").text("")
         loadComments(event)
       } else if (code == 500) {
         console.log()
       }
     })
   })
-
+  // Load the rating bar for the event
   $("#ratingContainer").load("components/start_rating.html", function () {})
+
   // Load comments
   loadComments(event)
 })
@@ -75,24 +94,36 @@ function loadComments(event) {
             .text(`${comment.user_name} Rates This ${comment.rating}/5`)
           $(this).find("p").text(comment.text)
 
-          // Edit a comment
-          $(this)
-            .find("#btn-warning")
-            .click(function (e) {
-              e.preventDefault()
-            })
-
-          // Delete a comment
-          $(this)
-            .find("#btn-danger")
-            .click(function (e) {
-              e.preventDefault()
-            })
-
           // Only YOU can edit your own comment
-          getUser().u_id || sa_id != comment.u_id
-            ? $("#editComment").hide()
-            : null
+          const id = getUser().stu_id || getUser().sa_id
+
+          if (comment.u_id == id) {
+            // Edit a comment
+            $(this)
+              .find(".btn-warning")
+              .on("click", function (e) {
+                console.log("Editing comment...")
+                e.preventDefault()
+                // Add your edit logic here
+                loadEditCommentModal(comment)
+              })
+
+            // Delete a comment
+            $(this)
+              .find(".btn-danger")
+              .on("click", function (e) {
+                console.log("Deleting comment...")
+                e.preventDefault()
+                deleteComment(comment.c_id).then(() => {
+                  // Remove it from the list of comments
+                  $(`#comment-${comment.c_id}`).remove()
+                })
+              })
+          } else {
+            // Hide the edit button for users who don't own the comment
+            $(this).find(".btn-warning").hide()
+            $(this).find(".btn-danger").hide()
+          }
         })
         $("#commentContainer").append(commentElement)
       })
@@ -136,4 +167,41 @@ function initMap(event) {
     position: defaultLocation,
     map: map,
   })
+}
+
+async function editComment(c_id, text, rating) {
+  return await callAPI(
+    "/editComment.php",
+    { c_id: c_id, text: text, rating: rating },
+    "POST"
+  )
+}
+
+async function deleteComment(c_id) {
+  return await callAPI("/deleteComment.php", { c_id: c_id }, "POST")
+}
+
+function loadEditCommentModal(comment) {
+  // Load the modal
+  $("#editCommentModal").load(
+    "components/edit_comment_modal.html",
+    function () {
+      $("#editCommentText").text(comment.text)
+      $("#saveEditComment").on("click", function () {
+        console.log(`${comment.text} ${$("#editCommentText").val()}`)
+        if (comment.text != $("#editCommentText").val()) {
+          // Update the database
+          editComment(comment.c_id, $("#editCommentText").val(), comment.rating)
+          // Update the comment on the screen
+          $(`#comment-${comment.c_id}`)
+            .find("p")
+            .text($("#editCommentText").val())
+
+          $("#editModal").modal("toggle")
+        }
+      })
+
+      $("#editModal").modal("show")
+    }
+  )
 }

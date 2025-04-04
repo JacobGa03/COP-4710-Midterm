@@ -17,6 +17,7 @@ if ($conn->connect_error) {
 $query = "
     SELECT 
         C.c_id, 
+        C.u_id,
         C.text, 
         C.rating, 
         S.name AS user_name 
@@ -51,4 +52,3 @@ if (empty($comments)) {
 
 $stmt->close();
 $conn->close();
-?>
