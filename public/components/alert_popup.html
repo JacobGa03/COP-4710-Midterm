@@ -1,0 +1,27 @@
+<div
+  id="alert-danger"
+  class="floating-alert container mt-5"
+>
+  <div
+    class="alert alert-danger alert-dismissible fade show"
+    role="alert"
+  >
+    <span id="warning-text"></span>
+
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+</div>
+
+<style>
+  .floating-alert {
+    position: fixed;
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right */
+    z-index: 1050; /* Ensure it is above other content */
+  }
+</style>

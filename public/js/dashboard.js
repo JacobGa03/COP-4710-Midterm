@@ -95,6 +95,19 @@ $(document).ready(function () {
             // Clear the form of any input
             $("#addEventForm").trigger("reset")
           } else {
+            $("#addEventModal").toggle()
+            if (result.error.includes("Overlapping")) {
+              $("#alert-modal").load(
+                "components/alert_popup.html",
+                function () {
+                  const alertDanger = $("#alert-danger")
+                  alertDanger
+                    .find("span")
+                    .text("Someone Else Reserved This Place at This Time")
+                  alertDanger.show()
+                }
+              )
+            }
             console.log("Error", code, " ", result.error)
           }
         })
