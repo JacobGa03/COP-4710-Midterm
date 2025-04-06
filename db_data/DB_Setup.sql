@@ -146,7 +146,7 @@ CREATE TRIGGER RSOStatusUpdateA
 AFTER INSERT ON RSO_Member
 FOR EACH ROW 
 BEGIN
-    IF ((SELECT COUNT(*) FROM RSO_Member M WHERE M.rso_id = NEW.rso_id) > 4)
+    IF ((SELECT COUNT(*) FROM RSO_Member M WHERE M.rso_id = NEW.rso_id) > 3)
     THEN
         -- Update teh RSO status to 'active'
         UPDATE RSO 
@@ -174,7 +174,7 @@ CREATE TRIGGER RSOStatusUpdateP
 AFTER DELETE ON RSO_Member
 FOR EACH ROW
 BEGIN
-    IF (SELECT COUNT(*) FROM RSO_Member WHERE rso_id = OLD.rso_id) < 5 THEN
+    IF (SELECT COUNT(*) FROM RSO_Member WHERE rso_id = OLD.rso_id) < 4 THEN
         -- Update the RSO status to 'inactive'
         UPDATE RSO
         SET Status = 'inactive'

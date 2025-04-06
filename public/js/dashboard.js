@@ -98,7 +98,7 @@ $(document).ready(function () {
             $("#addEventModal").toggle()
             if (result.error.includes("Overlapping")) {
               $("#alert-modal").load(
-                "components/alert_popup.html",
+                "components/danger_alert_popup.html",
                 function () {
                   const alertDanger = $("#alert-danger")
                   alertDanger

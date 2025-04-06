@@ -9,29 +9,46 @@ $(document).ready(function () {
         // Get the different attributes of the RSO
         rsoName = $("#RSOName").val()
         rsoType = $("#RSOType").val()
+        rsoMembers = $("#RSOMembers").val()
         rsoDescription = $("#RSODescription").val()
-        // TODO: Add list of potential emails to add
+        // Convert the members text array to list of potential student emails to add
+        rsoMembersList = rsoMembers.split(",").map((member) => member.trim())
+
+        console.log(rsoMembersList)
 
         // Create the RSO
-        createRSO(rsoName, rsoType, rsoDescription).then(([code, result]) => {
-          if (code == 200) {
-            // Copy over the newly joined RSO
-            user = getUser()
-            newArr = []
-            user.rso_admin.forEach((rso_id) => {
-              newArr.push(rso_id)
-            })
-            newArr.push(result["rso_id"])
-            user.rso_admin = newArr
-            saveUserCookie(user)
+        createRSO(rsoName, rsoType, rsoMembersList, rsoDescription).then(
+          ([code, result]) => {
+            if (code == 200) {
+              // Copy over the newly joined RSO
+              user = getUser()
+              newArr = []
+              user.rso_admin.forEach((rso_id) => {
+                newArr.push(rso_id)
+              })
+              newArr.push(result["rso_id"])
+              user.rso_admin = newArr
+              saveUserCookie(user)
 
-            $("#addRSOModal").toggle()
-            // Reload to display the events
-            loadRSOCards("")
-          } else {
-            console.log("Error creating RSO...", code, " ", result)
+              $("#addRSOModal").toggle()
+              // Display an alert pop up displaying the members that were added
+              $("#success-modal").load(
+                "components/success_alert_popup.html",
+                function () {
+                  const alertSuccess = $("#alert-success")
+                  alertSuccess
+                    .find("span")
+                    .text(`Able to Add ${result["members_added"]} to Your RSO`)
+                  alertSuccess.show()
+                }
+              )
+              // Reload to display the events
+              loadRSOCards("")
+            } else {
+              console.log("Error creating RSO...", code, " ", result)
+            }
           }
-        })
+        )
       })
     }
   )
@@ -137,7 +154,7 @@ function loadRSOModal(rso) {
   $("#event-modal").modal("show")
 }
 
-async function createRSO(name, category, description) {
+async function createRSO(name, category, members, description) {
   user = getUser()
   return await callAPI(
     "/createRSO.php",
@@ -145,6 +162,7 @@ async function createRSO(name, category, description) {
       name: name,
       admin_id: user.stu_id,
       university: user.u_id,
+      members: members,
       category: category,
       description: description,
     },
