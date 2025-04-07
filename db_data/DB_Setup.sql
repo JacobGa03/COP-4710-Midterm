@@ -217,21 +217,34 @@ DELIMITER ;
 
 INSERT INTO University (u_id, name) VALUES
 ('349dab72-0374-11f0-86aa-0242ac140002', 'University of Central Florida'),
-('e70427b5-081d-11f0-ab35-0242ac140002', 'University of South Florida-Main Campus');
+('e70427b5-081d-11f0-ab35-0242ac140002', 'University of South Florida');
 
 INSERT INTO Super_Admins (sa_id, password, email, university, name) VALUES 
-('316aec42-0b70-11f0-b2a6-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'admin1@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'John Doe');
+('316aec42-0b70-11f0-b2a6-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'admin1@ucf.com', '349dab72-0374-11f0-86aa-0242ac140002', 'John Admin');
 
 INSERT INTO Students (stu_id, password, email, university, name) VALUES
-('1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student1@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Alice Smith'),
-('2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student2@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Bob Johnson'),
-('3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student3@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Charlie Brown'),
-('4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student4@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Diana Prince'),
-('553814bc-11c2-11f0-b6c4-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student8@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Emily Carter'),
-('5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student5@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Ethan Hunt'),
-('6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student6@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Fiona Gallagher'),
-('79acd6fc-11c2-11f0-b6c4-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student9@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Jacob Thompson'),
-('e704cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student7@example.com', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Eve Lancey');
+('1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'alice.smith@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Alice Smith'),
+('2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7z', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'avery.wynn@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Avery Wynn'),
+('3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'skyler.dale@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Skyler Dale'),
+('4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'reese.lang@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Reese Lang'),
+('553814bc-11c2-11f0-b6c4-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'quinn.mercer@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Quinn Mercer'),
+('5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'ethan.hunt@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Ethan Hunt'),
+('6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'john.doe@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'John Doe'),
+('79acd6fc-11c2-11f0-b6c4-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'jacob.thompson@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Jacob Thompson'),
+('e704cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'eve.lancey@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Eve Lancey'),
+('2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'johnny.doe@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Johnny Doe'),
+('3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8s', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'jane.doe@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Jane Doe'),
+('4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9t', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'michael.johnson@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Michael Johnson'),
+('5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0u', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'sarah.connor@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Sarah Connor'),
+('6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1v', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'david.brown@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'David Brown'),
+('f814cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'john.doe@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'John Doe'),
+('g924cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'jane.smith@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Jane Smith'),
+('h034cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'michael.johnson@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Michael Johnson'),
+('i144cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'sarah.connor@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Sarah Connor'),
+('j254cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'david.brown@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'David Brown'),
+('k364cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'laura.wilson@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Laura Wilson'),
+('l474cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'robert.james@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Robert James'),
+('m584cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'emily.jones@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Emily Jones');
 
 INSERT INTO RSO(rso_id, admin_id, name, associated_university, status, category, description) VALUES
 ('1204c1e1-11b5-11f0-b6c4-0242ac140002', '3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', 'League of Voters', '349dab72-0374-11f0-86aa-0242ac140002', 'inactive', 'Political', 'Sign up and exercise your civic right.'),
