@@ -40,7 +40,13 @@ $(document).ready(function () {
   switch (event.visibility) {
     case "rso":
       $("#displayVisibility").find("strong").text(`RSO: `)
-      $("#displayVisibility").find("span").text(`${event.rso}`)
+      getRSO(event.rso_id).then(([code, result]) => {
+        if (code == 200) {
+          $("#displayVisibility").find("span").text(`${result["name"]}`)
+        } else {
+          $("#displayVisibility").find("span").text(`Some RSO`)
+        }
+      })
       break
     case "private":
       $("#displayVisibility").find("strong").text(`Private: `)

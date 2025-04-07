@@ -96,6 +96,7 @@ $(document).ready(function () {
             $("#addEventForm").trigger("reset")
           } else {
             $("#addEventModal").toggle()
+            // Display Errors in creating the event
             if (result.error.includes("Overlapping")) {
               $("#alert-modal").load(
                 "components/danger_alert_popup.html",
@@ -104,6 +105,17 @@ $(document).ready(function () {
                   alertDanger
                     .find("span")
                     .text("Someone Else Reserved This Place at This Time")
+                  alertDanger.show()
+                }
+              )
+            } else if (result.error.includes("Active RSO")) {
+              $("#alert-modal").load(
+                "components/danger_alert_popup.html",
+                function () {
+                  const alertDanger = $("#alert-danger")
+                  alertDanger
+                    .find("span")
+                    .text("Only Active RSOs may Create Events!")
                   alertDanger.show()
                 }
               )
@@ -165,8 +177,8 @@ async function getEvents(searchQuery) {
     "/findEvent.php",
     {
       associated_uni: user.u_id || user.university,
+      stu_id: user.stu_id || user.sa_id,
       name: searchQuery,
-      // TODO: Need to add way to search on category
       category: "",
     },
     "POST"
