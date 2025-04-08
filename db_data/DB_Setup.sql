@@ -192,6 +192,7 @@ BEFORE INSERT ON Events
 FOR EACH ROW
 BEGIN
     DECLARE overlap_count INT;
+    DECLARE overlap_message VARCHAR(255);
 
     -- Check for overlapping events at the same location
     SELECT COUNT(*)
@@ -204,10 +205,26 @@ BEGIN
         OR (start_time BETWEEN NEW.start_time AND NEW.end_time)
     );
 
-    -- If overlapping events exist, throw an error
+    -- If overlapping events exist, construct the error message
     IF overlap_count > 0 THEN
+        SELECT CONCAT(
+            'Overlapping event: ',
+            E.name, ' at ', AL.address, ' ', COALESCE(E.room, ''), 
+            ' from ', E.start_time, ' to ', E.end_time
+        )
+        INTO overlap_message
+        FROM Events E
+        LEFT JOIN At_Location AL ON E.location = AL.l_id
+        WHERE E.location = NEW.location AND E.room = NEW.room
+        AND (
+            (NEW.start_time BETWEEN E.start_time AND E.end_time)
+            OR (NEW.end_time BETWEEN E.start_time AND E.end_time)
+            OR (E.start_time BETWEEN NEW.start_time AND NEW.end_time)
+        )
+        LIMIT 1;
+
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Overlapping events are not allowed at the same location';
+        SET MESSAGE_TEXT = overlap_message;
     END IF;
 END$$
 

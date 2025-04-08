@@ -102,9 +102,7 @@ $(document).ready(function () {
                 "components/danger_alert_popup.html",
                 function () {
                   const alertDanger = $("#alert-danger")
-                  alertDanger
-                    .find("span")
-                    .text("Someone Else Reserved This Place at This Time")
+                  alertDanger.find("span").text(`${result["error"]}`)
                   alertDanger.show()
                 }
               )
