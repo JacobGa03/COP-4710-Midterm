@@ -208,6 +208,7 @@ async function createEvent(
   return await callAPI(
     "/createEvent.php",
     {
+      stu_id: getUser().stu_id || getUser().sa_id,
       u_id: getUser().u_id,
       name: name,
       contact_phone: contactPhone,
