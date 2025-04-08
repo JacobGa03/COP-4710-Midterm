@@ -148,7 +148,7 @@ FOR EACH ROW
 BEGIN
     IF ((SELECT COUNT(*) FROM RSO_Member M WHERE M.rso_id = NEW.rso_id) > 3)
     THEN
-        -- Update teh RSO status to 'active'
+        -- Update the RSO status to 'active'
         UPDATE RSO 
         SET Status = 'active'
         WHERE rso_id = NEW.rso_id;

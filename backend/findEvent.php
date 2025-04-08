@@ -38,7 +38,7 @@ if ($conn->connect_error) {
 
     if (!empty($data['name'])) {
         $queryPublicEvents .= " AND E.name LIKE ?";
-        $paramsPlubic[] = "%" . $data['name'] . "%";
+        $paramsPublic[] = "%" . $data['name'] . "%";
         $typesPublic .= "s";
     }
     if (!empty($data['category'])) {
@@ -70,7 +70,7 @@ if ($conn->connect_error) {
         FROM Events E
         LEFT JOIN Private_Event PE ON E.e_id = PE.e_id
         LEFT JOIN At_Location AL ON E.location = AL.l_id
-        WHERE PE.associated_uni = ?
+        WHERE PE.associated_uni = ? 
     ";
     $paramsPrivate[] = $data['associated_uni'];
     $typesPrivate .= "s";
@@ -90,7 +90,7 @@ if ($conn->connect_error) {
     $typesRSO = "";
     // Query for RSO events
     $queryRSOEvents = "
-        SELECT 
+        SELECT DISTINCT
             E.e_id, 
             E.name, 
             E.description, 
