@@ -24,11 +24,11 @@ async function callAPI(endpoint, requestData, method) {
       case 200:
         return [response.status, result]
       case 404:
-        return [response.status, {}]
+        return [response.status, result]
       case 500:
-        return [response.status, {}]
+        return [response.status, result]
       default:
-        return [response.status, {}]
+        return [response.status, result]
     }
   } catch (e) {
     console.log("API error: ", e)
@@ -126,4 +126,10 @@ function convertToDateTime(isoString) {
 // Get the RSO information based on an RSO id
 async function getRSO(rso_id) {
   return await callAPI("/getRSO.php", { rso_id: rso_id }, "POST")
+}
+
+function showAlert(alertText) {
+  $("#alert-modal").load("components/alert_popup.html")
+  $("#alert-danger").find("span").text(`${alertText}`)
+  $("#alert-danger").show()
 }

@@ -3,6 +3,7 @@ include 'index.php';
 //get data
 $data = getRequestInfo();
 
+$stu_id = $data['stu_id'];
 $contactPhone = $data['contact_phone'];
 $contactEmail = $data['contact_email'];
 $name = $data['name'];
@@ -30,7 +31,7 @@ else {
     // If the user is creating an RSO event, ensure the RSO is active
     if ($visibility == 'rso') {
         // Find the RSO
-        $newStmt = $conn->prepare("SELECT rso_id, status FROM RSO WHERE rso_id = ?");
+        $newStmt = $conn->prepare("SELECT rso_id, admin_id, status FROM RSO WHERE rso_id = ?");
         $newStmt->bind_param("s", $rso_id);
         if ($newStmt->execute() === false) {
             error_log('Failed to Retrieve Associated RSO: ' . $stmt->error);
@@ -43,6 +44,11 @@ else {
         if ($newRow['status'] == 'inactive') {
             error_log('Only Active RSOs May Create Events' . $stmt->error);
             returnError(CODE_SERVER_ERROR, 'Only Active RSOs May Create Events' . $stmt->error);
+        }
+        // The person calling this endpoint isn't the RSO admin
+        if ($newRow['admin_id'] != $stu_id) {
+            error_log('Only RSO admins may create RSO Events' . $stmt->error);
+            returnError(CODE_SERVER_ERROR, 'Only RSO admins may create RSO Events' . $stmt->error);
         }
     }
 

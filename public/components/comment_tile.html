@@ -1,23 +1,21 @@
 <div class="card">
   <div class="card-body">
-    <div class="row">
+    <div class="d-flex justify-content-between align-items-center">
       <!-- Left Column: Comment text and rating -->
-      <div class="col-9">
-        <!-- Commenter's name -->
-        <h5 class="card-title">Commenter's Name</h5>
-        <!-- Rating -->
-        <h6 class="card-subtitle text-muted">Rating: 4.5/5</h6>
-        <!-- Comment text -->
-        <p class="card-text">This is the comment text.</p>
+      <div>
+      <!-- Commenter's name -->
+      <h5 class="card-title mb-1">Commenter's Name</h5>
+      <!-- Rating -->
+      <h6 class="card-subtitle text-muted mb-2">Rating: 4.5/5</h6>
+      <!-- Comment text -->
+      <p class="card-text mb-0">This is the comment text.</p>
       </div>
       <!-- Right Column: Edit/Delete button -->
-      <div
-        class="col-3 text-end"
-        id="editComment"
-      >
-        <button class="btn btn-warning">Edit</button>
-        <button class="btn btn-danger">Delete</button>
+      <div id="editComment">
+      <button class="btn btn-warning me-2">Edit</button>
+      <button class="btn btn-danger">Delete</button>
       </div>
+    </div>
     </div>
   </div>
 </div>

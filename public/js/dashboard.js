@@ -95,6 +95,29 @@ $(document).ready(function () {
             // Clear the form of any input
             $("#addEventForm").trigger("reset")
           } else {
+            $("#addEventModal").toggle()
+            // Display Errors in creating the event
+            if (result.error.includes("Overlapping")) {
+              $("#alert-modal").load(
+                "components/danger_alert_popup.html",
+                function () {
+                  const alertDanger = $("#alert-danger")
+                  alertDanger.find("span").text(`${result["error"]}`)
+                  alertDanger.show()
+                }
+              )
+            } else if (result.error.includes("Active RSO")) {
+              $("#alert-modal").load(
+                "components/danger_alert_popup.html",
+                function () {
+                  const alertDanger = $("#alert-danger")
+                  alertDanger
+                    .find("span")
+                    .text("Only Active RSOs may Create Events!")
+                  alertDanger.show()
+                }
+              )
+            }
             console.log("Error", code, " ", result.error)
           }
         })
@@ -152,8 +175,8 @@ async function getEvents(searchQuery) {
     "/findEvent.php",
     {
       associated_uni: user.u_id || user.university,
+      stu_id: user.stu_id || user.sa_id,
       name: searchQuery,
-      // TODO: Need to add way to search on category
       category: "",
     },
     "POST"
@@ -183,6 +206,7 @@ async function createEvent(
   return await callAPI(
     "/createEvent.php",
     {
+      stu_id: getUser().stu_id || getUser().sa_id,
       u_id: getUser().u_id,
       name: name,
       contact_phone: contactPhone,

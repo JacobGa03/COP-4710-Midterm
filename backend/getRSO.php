@@ -21,7 +21,7 @@ if ($conn->connect_error) {
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         // TODO: Add more fields here to display different stuff
-        returnJson(['admin_id' => $row['admin_id'], 'name' => $row['name'], 'category' => $row['category'], 'description' => $row['description']]);
+        returnJson($row);
     } else {
         returnError(CODE_NOT_FOUND, "RSO not found");
     }

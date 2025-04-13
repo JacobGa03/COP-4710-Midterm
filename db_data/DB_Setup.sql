@@ -146,9 +146,9 @@ CREATE TRIGGER RSOStatusUpdateA
 AFTER INSERT ON RSO_Member
 FOR EACH ROW 
 BEGIN
-    IF ((SELECT COUNT(*) FROM RSO_Member M WHERE M.rso_id = NEW.rso_id) > 4)
+    IF ((SELECT COUNT(*) FROM RSO_Member M WHERE M.rso_id = NEW.rso_id) > 3)
     THEN
-        -- Update teh RSO status to 'active'
+        -- Update the RSO status to 'active'
         UPDATE RSO 
         SET Status = 'active'
         WHERE rso_id = NEW.rso_id;
@@ -174,7 +174,7 @@ CREATE TRIGGER RSOStatusUpdateP
 AFTER DELETE ON RSO_Member
 FOR EACH ROW
 BEGIN
-    IF (SELECT COUNT(*) FROM RSO_Member WHERE rso_id = OLD.rso_id) < 5 THEN
+    IF (SELECT COUNT(*) FROM RSO_Member WHERE rso_id = OLD.rso_id) < 4 THEN
         -- Update the RSO status to 'inactive'
         UPDATE RSO
         SET Status = 'inactive'
@@ -192,6 +192,7 @@ BEFORE INSERT ON Events
 FOR EACH ROW
 BEGIN
     DECLARE overlap_count INT;
+    DECLARE overlap_message VARCHAR(255);
 
     -- Check for overlapping events at the same location
     SELECT COUNT(*)
@@ -204,10 +205,26 @@ BEGIN
         OR (start_time BETWEEN NEW.start_time AND NEW.end_time)
     );
 
-    -- If overlapping events exist, throw an error
+    -- If overlapping events exist, construct the error message
     IF overlap_count > 0 THEN
+        SELECT CONCAT(
+            'Overlapping event: ',
+            E.name, ' at ', AL.address, ' ', COALESCE(E.room, ''), 
+            ' from ', E.start_time, ' to ', E.end_time
+        )
+        INTO overlap_message
+        FROM Events E
+        LEFT JOIN At_Location AL ON E.location = AL.l_id
+        WHERE E.location = NEW.location AND E.room = NEW.room
+        AND (
+            (NEW.start_time BETWEEN E.start_time AND E.end_time)
+            OR (NEW.end_time BETWEEN E.start_time AND E.end_time)
+            OR (E.start_time BETWEEN NEW.start_time AND NEW.end_time)
+        )
+        LIMIT 1;
+
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Overlapping events are not allowed at the same location';
+        SET MESSAGE_TEXT = overlap_message;
     END IF;
 END$$
 
@@ -217,28 +234,54 @@ DELIMITER ;
 
 INSERT INTO University (u_id, name) VALUES
 ('349dab72-0374-11f0-86aa-0242ac140002', 'University of Central Florida'),
-('e70427b5-081d-11f0-ab35-0242ac140002', 'University of South Florida-Main Campus');
+('e70427b5-081d-11f0-ab35-0242ac140002', 'University of South Florida');
 
 INSERT INTO Super_Admins (sa_id, password, email, university, name) VALUES 
-('316aec42-0b70-11f0-b2a6-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'admin1@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'John Doe');
+('316aec42-0b70-11f0-b2a6-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'admin1@ucf.com', '349dab72-0374-11f0-86aa-0242ac140002', 'John Admin');
 
 INSERT INTO Students (stu_id, password, email, university, name) VALUES
-('1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student1@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Alice Smith'),
-('2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student2@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Bob Johnson'),
-('3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student3@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Charlie Brown'),
-('4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student4@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Diana Prince'),
-('5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student5@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Ethan Hunt'),
-('6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student6@example.com', '349dab72-0374-11f0-86aa-0242ac140002', 'Fiona Gallagher'),
-('e704cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'student7@example.com', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Eve Lancey');
+('1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'alice.smith@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Alice Smith'),
+('2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7z', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'avery.wynn@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Avery Wynn'),
+('3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'skyler.dale@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Skyler Dale'),
+('4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'reese.lang@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Reese Lang'),
+('553814bc-11c2-11f0-b6c4-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'quinn.mercer@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Quinn Mercer'),
+('5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0t', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'ethan.hunt@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Ethan Hunt'),
+('6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1u', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'john.doe@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'John Doe'),
+('79acd6fc-11c2-11f0-b6c4-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'jacob.thompson@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Jacob Thompson'),
+('e704cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'eve.lancey@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Eve Lancey'),
+('2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'johnny.doe@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Johnny Doe'),
+('3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8s', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'jane.doe@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Jane Doe'),
+('4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9t', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'michael.johnson@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Michael Johnson'),
+('5e6f7g8h-9i0j-1k2l-3m4n-5o6p7q8r9s0u', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'sarah.connor@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'Sarah Connor'),
+('6f7g8h9i-0j1k-2l3m-4n5o-6p7q8r9s0t1v', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'david.brown@ucf.edu', '349dab72-0374-11f0-86aa-0242ac140002', 'David Brown'),
+('f814cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'john.doe@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'John Doe'),
+('g924cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'jane.smith@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Jane Smith'),
+('h034cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'michael.johnson@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Michael Johnson'),
+('i144cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'sarah.connor@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Sarah Connor'),
+('j254cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'david.brown@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'David Brown'),
+('k364cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'laura.wilson@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Laura Wilson'),
+('l474cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'robert.james@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Robert James'),
+('m584cb52-081d-11f0-ab35-0242ac140002', '2413fb3709b05939f04cf2e92f7d0897fc2596f9ad0b8a9ea855c7bfebaae892', 'emily.jones@usf.edu', 'e70427b5-081d-11f0-ab35-0242ac140002', 'Emily Jones');
 
-INSERT INTO RSO (rso_id, admin_id, name, associated_university) VALUES
-('9a041f13-0381-11f0-b6af-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'UCF Jazz Appreciators', '349dab72-0374-11f0-86aa-0242ac140002'),
-('4b3d20b6-081e-11f0-ab35-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', 'Chess Knights', '349dab72-0374-11f0-86aa-0242ac140002'),
-('5dd94b0f-081e-11f0-ab35-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', 'Graduate Student Association', '349dab72-0374-11f0-86aa-0242ac140002'),
-('a6ced1e5-0821-11f0-ab35-0242ac140002', 'e704cb52-081d-11f0-ab35-0242ac140002', 'Chess @ USF', 'e70427b5-081d-11f0-ab35-0242ac140002');
+INSERT INTO RSO(rso_id, admin_id, name, associated_university, status, category, description) VALUES
+('1204c1e1-11b5-11f0-b6c4-0242ac140002', '3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', 'League of Voters', '349dab72-0374-11f0-86aa-0242ac140002', 'inactive', 'Political', 'Sign up and exercise your civic right.'),
+('22f71a85-11b5-11f0-b6c4-0242ac140002', '3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', 'English Knights', '349dab72-0374-11f0-86aa-0242ac140002', 'active', 'Educational', 'We love reading and literature.'),
+('4b3d20b6-081e-11f0-ab35-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', 'Chess Knights', '349dab72-0374-11f0-86aa-0242ac140002', 'inactive', NULL, NULL),
+('527a88ce-11b4-11f0-b6c4-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Coding Knights', '349dab72-0374-11f0-86aa-0242ac140002', 'inactive', 'Tech', 'We love coding!'),
+('58e892ab-11b5-11f0-b6c4-0242ac140002', '4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s', 'Marching Knights', '349dab72-0374-11f0-86aa-0242ac140002', 'inactive', 'Music', 'We love to march for the UCF football team.'),
+('5dd94b0f-081e-11f0-ab35-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', 'Graduate Student Association', '349dab72-0374-11f0-86aa-0242ac140002', 'inactive', NULL, NULL),
+('9a041f13-0381-11f0-b6af-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'UCF Jazz Appreciators', '349dab72-0374-11f0-86aa-0242ac140002', 'inactive', NULL, NULL),
+('a6ced1e5-0821-11f0-ab35-0242ac140002', 'e704cb52-081d-11f0-ab35-0242ac140002', 'Chess @ USF', 'e70427b5-081d-11f0-ab35-0242ac140002', 'inactive', NULL, NULL);
 
-INSERT INTO RSO_Member(rso_id, stu_id) VALUES
-('9a041f13-0381-11f0-b6af-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q');
+INSERT INTO RSO_Member (rso_id, stu_id) VALUES
+('22f71a85-11b5-11f0-b6c4-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p'),
+('22f71a85-11b5-11f0-b6c4-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q'),
+('9a041f13-0381-11f0-b6af-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q'),
+('22f71a85-11b5-11f0-b6c4-0242ac140002', '4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s'),
+('4b3d20b6-081e-11f0-ab35-0242ac140002', '4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s'),
+('5dd94b0f-081e-11f0-ab35-0242ac140002', '4d5e6f7g-8h9i-0j1k-2l3m-4n5o6p7q8r9s'),
+('22f71a85-11b5-11f0-b6c4-0242ac140002', '553814bc-11c2-11f0-b6c4-0242ac140002'),
+('22f71a85-11b5-11f0-b6c4-0242ac140002', '79acd6fc-11c2-11f0-b6c4-0242ac140002');
 
 INSERT INTO At_Location (l_id, latitude, longitude, address) VALUES
 ('99cce850-0fd4-11f0-bcfe-0242ac140002', 28.6018701, -81.1987556, 'UCF Engineering II (ENG2)'),
@@ -246,22 +289,24 @@ INSERT INTO At_Location (l_id, latitude, longitude, address) VALUES
 ('e6a18e85-0fd4-11f0-bcfe-0242ac140002', 28.605286, -81.19902599999999, 'UCF Career Services and Experiential Learning (CSEL)');
 
 INSERT INTO Events (e_id, contact_phone, contact_email, name, description, start_time, end_time, category, location, room) VALUES
+('5106bd65-11c6-11f0-b6c4-0242ac140002', '9873214560', 'ab123423@ucf.edu', 'Knight Hacks GBM', 'Come for the Hax!', '2025-04-14 21:30:00', '2025-04-14 23:30:00', 'General', '99cce850-0fd4-11f0-bcfe-0242ac140002', '201'),
 ('99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '9876543210', 'sm123422@ucf.edu', 'FE Prep Session', 'Come practice some FE questions before the next exam!', '2025-04-09 21:30:00', '2025-04-09 23:30:00', 'Educational', '99cce850-0fd4-11f0-bcfe-0242ac140002', '237'),
-('c12114ec-0fd4-11f0-bcfe-0242ac140002', '6549873210', 'ta123422@ucf.edu', 'UCF CAB Movie Knight', 'We will be watching "Finding Nemo"! Pizza and popcorn provided.', '2025-04-11 23:30:00', '2025-04-12 02:30:00', 'Social', 'c1203ffd-0fd4-11f0-bcfe-0242ac140002', NULL),
+('b70aaaa2-11c5-11f0-b6c4-0242ac140002', '1236549870', 'ab124324@ucf.edu', 'Wiki Races', 'Come for a wiki races.', '2025-04-20 23:30:00', '2025-04-21 01:30:00', 'Social', '99cce850-0fd4-11f0-bcfe-0242ac140002', ''),
+('baf81a8c-11c7-11f0-b6c4-0242ac140002', '987654654', 'ab12342@ucf.edu', 'Knight Hax 2', '', '2025-04-14 21:30:00', '2025-04-14 22:30:00', 'Tech', '99cce850-0fd4-11f0-bcfe-0242ac140002', ''),
 ('e6a20c8a-0fd4-11f0-bcfe-0242ac140002', '9786453120', 'za209320@ucf.edu', 'Resume Review', 'Come get your resume reviewed by our career professionals.', '2025-04-10 18:00:00', '2025-04-10 19:30:00', 'Professional', 'e6a18e85-0fd4-11f0-bcfe-0242ac140002', NULL);
 
 INSERT INTO Private_Event (e_id, associated_uni) VALUES
+('5106bd65-11c6-11f0-b6c4-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
 ('99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
-('c12114ec-0fd4-11f0-bcfe-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
+('b70aaaa2-11c5-11f0-b6c4-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
+('baf81a8c-11c7-11f0-b6c4-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002'),
 ('e6a20c8a-0fd4-11f0-bcfe-0242ac140002', '349dab72-0374-11f0-86aa-0242ac140002');
 
 INSERT INTO Comments (c_id, e_id, u_id, text, rating) VALUES
 ('1dd9a0ea-10b2-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Wow, thanks to all the TAs who help make this possible.', 3),
-('1ed18b6e-10b4-11f0-8d56-a2a285eb5b7b', 'c12114ec-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'I love "Finding Nemo!" its a great movie from my childhood.', 4),
 ('24dd5a70-10b2-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Wow, thanks to all the TAs who help make this possible.', 5),
 ('3b35f113-10b7-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '3c4d5e6f-7g8h-9i0j-1k2l-3m4n5o6p7q8r', 'Who\'s ready?', 4),
 ('49fd872f-0fd6-11f0-a183-0242ac140002', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'I\'m sooo ready. We will all pass on our first attempt', 5),
 ('4e8f35c5-10b0-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Woop!', 5),
 ('54b581bb-10b4-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Let\'s get coding!!', 5),
-('597e870f-10b4-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Let\'s get coding!!', 5),
-('6a462e47-10b4-11f0-8d56-a2a285eb5b7b', 'c12114ec-0fd4-11f0-bcfe-0242ac140002', '2b3c4d5e-6f7g-8h9i-0j1k-2l3m4n5o6p7q', 'Meh movie ngl.', 2);
+('597e870f-10b4-11f0-8d56-a2a285eb5b7b', '99cd4f0e-0fd4-11f0-bcfe-0242ac140002', '1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p', 'Let\'s get coding!!', 5);

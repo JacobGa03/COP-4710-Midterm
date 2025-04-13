@@ -1,0 +1,53 @@
+<div
+  class="modal fade"
+  id="editModal"
+  tabindex="-1"
+  aria-labelledby="editModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5
+          class="modal-title"
+          id="editModalLabel"
+        >
+          Edit Comment
+        </h5>
+      </div>
+      <div class="modal-body">
+        <!-- Add your form or content here -->
+        <form id="editCommentForm">
+          <div class="mb-3">
+            <label
+              for="editCommentText"
+              class="form-label"
+              >Comment</label
+            >
+            <textarea
+              class="form-control"
+              id="editCommentText"
+              rows="2"
+            ></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-bs-dismiss="modal"
+        >
+          Close
+        </button>
+        <button
+          type="button"
+          class="btn btn-success"
+          id="saveEditComment"
+        >
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

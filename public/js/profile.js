@@ -46,14 +46,26 @@ async function loadRSOView() {
     // Load each card
     getRSO(rso_id).then(([code, result]) => {
       if (code == 200) {
-        // Load the card
-        $("#RSOAdminCards").append(`<div class="rsoCard" ></div>`)
-        $(".rsoCard")
-          .last()
-          .load("components/rso_info.html", function () {
-            $(this).find("h5").text(result["name"])
-            $(this).find("h6").text("You are an Admin")
-          })
+        const rsoAdminCard = $(`<div id="rso-${result["rso_id"]}"></div>`)
+        rsoAdminCard.load("components/rso_info.html", function () {
+          $(this).find("h5").text(result["name"])
+          $(this).find("h6").text("You are an Admin")
+          const description =
+            result["description"] == null
+              ? "No description..."
+              : result["description"]
+          $(this)
+            .find("p")
+            .text(
+              `${
+                description.length > 100
+                  ? description.substring(0, 100) + "..."
+                  : description
+              }`
+            )
+          $(this).find(".btn").hide()
+        })
+        $("#RSOAdminCards").append(rsoAdminCard)
       }
     })
   })
@@ -62,15 +74,54 @@ async function loadRSOView() {
     // Load each card
     getRSO(rso_id).then(([code, result]) => {
       if (code == 200) {
-        // Load the card
-        $("#RSOMemberCards").append(`<div class="rsoCard" ></div>`)
-        $(".rsoCard")
-          .last()
-          .load("components/rso_info.html", function () {
-            $(this).find("h5").text(result["name"])
-            $(this).find("h6").text("You are a Member")
-          })
+        const rsoMemberElement = $(`<div id="rso-${result["rso_id"]}" ></div>`)
+
+        rsoMemberElement.load("components/rso_info.html", function () {
+          $(this).find("h5").text(result["name"])
+          $(this).find("h6").text("You are a Member")
+          const description =
+            result["description"] == null
+              ? "No description..."
+              : result["description"]
+          $(this)
+            .find("p")
+            .text(
+              `${
+                description.length > 100
+                  ? description.substring(0, 100) + "..."
+                  : description
+              }`
+            )
+          $(this).find(".btn").show()
+          // Remove the user from the event
+          $(this)
+            .find(".btn")
+            .on("click", function () {
+              // Leave the rso
+              leaveRSO(result["rso_id"])
+              // Remove the RSO from the list of which the user is a part
+              $(`#rso-${result["rso_id"]}`).remove()
+
+              // Update user cookie to reflect that they have left
+              let user = getUser()
+              let newRSO = []
+              newRSO = user.rso_member.forEach((rso_id) => {
+                if (rso_id != result["rso_id"]) newRSO.push(rso_id)
+              })
+              user.rso_member = newRSO || []
+              saveUserCookie(user)
+            })
+        })
+        $("#RSOMemberCards").append(rsoMemberElement)
       }
     })
   })
+}
+
+async function leaveRSO(rso_id) {
+  return await callAPI(
+    "/leaveRSO.php",
+    { rso_id: rso_id, stu_id: getUser().stu_id },
+    "POST"
+  )
 }
